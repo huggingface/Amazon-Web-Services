@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64c115d1f661ace7c4022432/EbzfQisFJBEcKWDWLyV5O.png" alt="Meta Inc. logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">A 30B Muse Glimmer vision-language model for agentic coding, tool use, controllable reasoning, and 131K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span><span class="rounded-md px-1.5 py-0.5 bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">Vision</span></span></div></div>
 
-[meta-models/Muse-Glimmer-30B](https://huggingface.co/meta-models/Muse-Glimmer-30B) by [Meta Inc.](./publishers/meta-models): 30B parameters, 131,072-token context, license `apache-2.0`.
+[meta-models/Muse-Glimmer-30B](https://huggingface.co/meta-models/Muse-Glimmer-30B) by [Meta Inc.](https://huggingface.co/meta-models): 30B parameters, 131,072-token context, license `apache-2.0`.
 
 ## Deploy
 

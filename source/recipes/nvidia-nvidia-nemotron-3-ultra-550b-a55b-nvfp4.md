@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">NVFP4 550B-total, 55B-active LatentMoE with MTP, configurable reasoning, tool use, and native 262K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span></span></div></div>
 
-[nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4) by [NVIDIA](./publishers/nvidia): 550B-A55B parameters, 262,144-token context, license `other`.
+[nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4) by [NVIDIA](https://huggingface.co/nvidia): 550B-A55B parameters, 262,144-token context, license `other`.
 
 ## Deploy
 

@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646cf8084eefb026fb8fd8bc/oCTqufkdTkjyGodsx1vo1.png" alt="Meta Llama logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">Meta developed and released the Meta Llama 3 family of large language models (LLMs), a collection of pretrained and.</span><span class="flex flex-wrap gap-1.5 text-xs"></span></div></div>
 
-[meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) by [Meta Llama](./publishers/meta-llama): 8B parameters, 8,192-token context, license `llama3`.
+[meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) by [Meta Llama](https://huggingface.co/meta-llama): 8B parameters, 8,192-token context, license `llama3`.
 
 ## Deploy
 

@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6215ca5692c0ecfba9186921/hrRM50-6XcdWgg2AKpENG.jpeg" alt="Qwen logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">FP8 397B-total, 17B-active vision-language MoE with reasoning, tool use, MTP, and native 262K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span><span class="rounded-md px-1.5 py-0.5 bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">Vision</span></span></div></div>
 
-[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8) by [Qwen](./publishers/qwen): 397B-A17B parameters, 262,144-token context, license `apache-2.0`.
+[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8) by [Qwen](https://huggingface.co/Qwen): 397B-A17B parameters, 262,144-token context, license `apache-2.0`.
 
 ## Deploy
 

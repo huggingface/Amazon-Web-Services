@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68661bce022667cf9c7534fb/dwzGCqj9B7NGaJRO-NjjP.png" alt="Ornith logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">NVFP4 build of Ornith-1.5-122B, a Qwen3.5-based 122B MoE reasoning model for tool use and 262K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span><span class="rounded-md px-1.5 py-0.5 bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">Vision</span></span></div></div>
 
-[ornith-ai/Ornith-1.5-122B-NVFP4](https://huggingface.co/ornith-ai/Ornith-1.5-122B-NVFP4) by [Ornith](./publishers/ornith-ai): 122B-A10B parameters, 262,144-token context, license `mit`.
+[ornith-ai/Ornith-1.5-122B-NVFP4](https://huggingface.co/ornith-ai/Ornith-1.5-122B-NVFP4) by [Ornith](https://huggingface.co/ornith-ai): 122B-A10B parameters, 262,144-token context, license `mit`.
 
 ## Deploy
 

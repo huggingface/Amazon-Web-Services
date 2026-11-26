@@ -4,11 +4,10 @@ The recipes live in the Hub dataset `hf-rev/sagemaker-recipes`: `recipes.jsonl` 
 per deployable recipe and `models.jsonl` one row per model. `--fetch` downloads both into
 recipes/ (needs a token that can read the dataset, from HF_TOKEN or the `hf auth login`
 cache). Without `--fetch`, the pages are generated from those committed snapshots, so the
-docs build needs no token. Publisher descriptions come from recipes/publishers.json.
+docs build needs no token.
 
-Writes the catalog to source/recipes/index.md, one page per publisher to
-source/recipes/publishers/<org>.md, one page per model to source/recipes/<model-slug>.md,
-and the navigation entries in source/_toctree.yml.
+Writes the catalog to source/recipes/index.md, one page per model to
+source/recipes/<model-slug>.md, and the navigation entries in source/_toctree.yml.
 """
 
 from __future__ import annotations
@@ -29,9 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RECIPES_SNAPSHOT = ROOT / "recipes" / "recipes.jsonl"
 MODELS_SNAPSHOT = ROOT / "recipes" / "models.jsonl"
-PUBLISHERS = ROOT / "recipes" / "publishers.json"
 PAGES_DIR = ROOT / "source" / "recipes"
-PUBLISHER_DIR = PAGES_DIR / "publishers"
 INDEX = PAGES_DIR / "index.md"
 TOCTREE = ROOT / "source" / "_toctree.yml"
 
@@ -93,9 +90,6 @@ CAPABILITIES = [
     ("audio", "audio", "Audio", "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"),
 ]
 NEUTRAL_CHIP = "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
-SIZES = [("small", "Up to 10B parameters", 10e9), ("medium", "10B to 40B parameters", 40e9), ("large", "Over 40B parameters", None)]
-PRICE_STEPS = [3, 5, 10, 15, 25, 50, 100]
-SORTS = [("name", "Sort by name"), ("newest", "Newest first"), ("price", "Lowest price per hour")]
 NA = "n/a"
 LOGO_STYLE = 'style="background-color: #fff"'
 LOGO_CLASS = "shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"
@@ -106,40 +100,27 @@ CATALOG_SCRIPT = " ".join(
 const grid = root.querySelector("[data-grid]");
 const cards = Array.from(grid.children);
 const controls = Array.from(root.querySelectorAll("[data-filter]"));
-const value = (control) => control.type === "checkbox" ? (control.checked ? "1" : "") : control.value;
 const params = new URLSearchParams(window.location.search);
-for (const control of controls) { const saved = params.get(control.name); if (saved !== null) { if (control.type === "checkbox") { control.checked = saved === "1"; } else { control.value = saved; } } }
-const number = (card, key, fallback) => card.dataset[key] === "" ? fallback : Number(card.dataset[key]);
+for (const control of controls) { const saved = params.get(control.name); if (saved !== null) { control.value = saved; } }
 const apply = () => {
-const f = Object.fromEntries(controls.map((control) => [control.name, value(control)]));
+const f = Object.fromEntries(controls.map((control) => [control.name, control.value]));
 const text = f.q.trim().toLowerCase();
 let shown = 0;
 for (const card of cards) {
-const caps = card.dataset.caps.split(" ");
-const recipes = card.dataset.recipes.split(" ").map((entry) => entry.split("="));
 const match = (!text || card.dataset.search.includes(text))
 && (!f.org || card.dataset.org === f.org)
-&& (!f.size || card.dataset.size === f.size)
-&& ["tools", "reasoning", "vision", "audio"].every((cap) => !f[cap] || caps.includes(cap))
-&& recipes.some(([gpu, price]) => (!f.gpu || gpu === f.gpu) && (!f.price || (price !== "" && Number(price) <= Number(f.price))));
+&& (!f.gpu || card.dataset.gpus.split(" ").includes(f.gpu));
 card.hidden = !match;
 if (match) { shown += 1; }
 }
-const sorters = {
-name: (a, b) => a.dataset.name.localeCompare(b.dataset.name),
-newest: (a, b) => b.dataset.created.localeCompare(a.dataset.created),
-price: (a, b) => number(a, "price", Infinity) - number(b, "price", Infinity),
-};
-cards.slice().sort((a, b) => sorters[f.sort](a, b) || sorters.name(a, b)).forEach((card) => grid.appendChild(card));
 root.querySelector("[data-count]").textContent = shown === cards.length ? cards.length + " models" : shown + " of " + cards.length + " models";
 root.querySelector("[data-empty]").hidden = shown > 0;
 const query = new URLSearchParams();
-for (const control of controls) { if (value(control) && !(control.name === "sort" && control.value === "name")) { query.set(control.name, value(control)); } }
+for (const control of controls) { if (control.value) { query.set(control.name, control.value); } }
 const url = new URL(window.location.href);
 url.search = query.toString();
 history.replaceState(history.state, "", url.toString());
 };
-root.querySelector("[data-reset]").addEventListener("click", () => { for (const control of controls) { if (control.type === "checkbox") { control.checked = false; } else { control.value = control.name === "sort" ? "name" : ""; } } apply(); });
 root.addEventListener("input", apply);
 root.addEventListener("change", apply);
 apply();
@@ -319,22 +300,6 @@ def hub_info(model_id: str) -> dict:
     }
 
 
-def task_label(task: str | None) -> str:
-    labels = {"text-generation": "Text generation", "image-text-to-text": "Image-text-to-text"}
-    if task is None:
-        return "Other"
-    return labels.get(task, task.replace("-", " ").capitalize())
-
-
-def size_bucket(parameters: int | None) -> str:
-    if not parameters:
-        return ""
-    for key, _, limit in SIZES:
-        if limit is None or parameters < limit:
-            return key
-    return ""
-
-
 def month(day: str) -> str:
     return datetime.strptime(day, "%Y-%m-%d").strftime("%b %Y") if day else ""
 
@@ -367,7 +332,6 @@ def card(model_id: str, recipes: list[dict], info: dict, model: dict) -> str:
     cheapest = recipes[0]
     prices = [r["instance"]["price_per_hour_usd"] for r in recipes if r["instance"]["price_per_hour_usd"] is not None]
     price = min(prices) if prices else None
-    caps = [value for name, value, _, _ in CAPABILITIES if name in model["capabilities"]]
     footer = [f"from {usd(price)}/h" if price is not None else None, f"{len(recipes)} instances" if len(recipes) > 1 else None]
     if info["gated"]:
         footer.append("gated")
@@ -378,17 +342,9 @@ def card(model_id: str, recipes: list[dict], info: dict, model: dict) -> str:
         ("Released", month(info["created"]) or NA),
     ]
     data = {
-        "name": model_id.lower(),
         "search": f"{model_id.lower()} {info['org_name'].lower()} {model['description'].lower()}",
         "org": info["org"],
-        "size": size_bucket(info["parameters"]),
-        "caps": " ".join(caps),
-        "recipes": " ".join(
-            f"{slug(r['instance']['accelerator'] or '')}={r['instance']['price_per_hour_usd'] if r['instance']['price_per_hour_usd'] is not None else ''}"
-            for r in recipes
-        ),
-        "price": price if price is not None else "",
-        "created": info["created"],
+        "gpus": " ".join(sorted({slug(r["instance"]["accelerator"] or "") for r in recipes})),
     }
     attributes = " ".join(f'data-{key}="{esc(value)}"' for key, value in data.items())
     deploy = (
@@ -439,52 +395,19 @@ def select(name: str, options: list[tuple[str, str]], default: str = "") -> str:
     )
 
 
-def checkbox(name: str, label: str) -> str:
-    return (
-        f'<label class="inline-flex items-center gap-1.5 text-sm"><input data-filter type="checkbox" name="{name}" class="rounded"> '
-        f"{esc(label)}</label>"
-    )
-
-
-def publisher_tile(org: str, info: dict, description: str | None, count: int) -> str:
-    text = f'<span class="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">{esc(description)}</span>' if description else ""
-    return (
-        f'<a href="./publishers/{slug(org)}" class="flex items-center gap-3 rounded-xl border border-gray-200 px-3 py-2.5 no-underline! shadow-sm '
-        'hover:border-gray-300 dark:border-gray-800 dark:hover:border-gray-700">'
-        f"{logo(info, 'size-10')}"
-        '<span class="flex min-w-0 flex-col">'
-        f'<span class="font-semibold text-gray-900 dark:text-gray-100">{esc(info["org_name"])} '
-        f'<span class="text-sm font-normal text-gray-500 dark:text-gray-400">· {count} model{"s" if count > 1 else ""}</span></span>'
-        f"{text}</span></a>"
-    )
-
-
 def catalog(models: dict[str, list[dict]], infos: dict[str, dict], metadata: dict[str, dict]) -> list[str]:
     recipes = [recipe for model_recipes in models.values() for recipe in model_recipes]
     orgs = sorted({(info["org"], info["org_name"]) for info in infos.values()}, key=lambda org: org[1].lower())
     gpus = sorted({r["instance"]["accelerator"] for r in recipes if r["instance"]["accelerator"]})
-    sizes = {size_bucket(info["parameters"]) for info in infos.values()}
-    prices = [r["instance"]["price_per_hour_usd"] for r in recipes if r["instance"]["price_per_hour_usd"] is not None]
-    steps = [step for step in PRICE_STEPS if prices and min(prices) <= step]
-    steps = steps[: next((i + 1 for i, step in enumerate(steps) if step >= max(prices)), len(steps))]
     filters = (
-        '<div><input data-filter type="search" name="q" placeholder="Search models" aria-label="Search models" '
+        '<div class="grid grid-cols-1 gap-2 sm:grid-cols-3">'
+        '<input data-filter type="search" name="q" placeholder="Search models" aria-label="Search models" '
         'class="h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950">'
-        '<div class="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">'
         + select("org", [("", "All publishers"), *orgs])
         + select("gpu", [("", "All GPUs"), *[(slug(gpu), gpu) for gpu in gpus]])
-        + select("size", [("", "All sizes"), *[(key, label) for key, label, _ in SIZES if key in sizes]])
-        + select("price", [("", "Any price"), *[(str(step), f"Up to ${step} per hour") for step in steps]])
-        + select("sort", SORTS, "name")
-        + "</div></div>"
-    )
-    toggles = (
-        '<div class="mt-3 flex flex-wrap items-center gap-4">'
-        + "".join(checkbox(value, label) for _, value, label, _ in CAPABILITIES)
-        + f'<span class="ml-auto text-sm text-gray-500 dark:text-gray-400" data-count>{len(models)} models</span>'
-        + '<button type="button" data-reset class="text-sm text-gray-500 underline dark:text-gray-400">Reset</button>'
         + "</div>"
     )
+    toggles = f'<div class="mt-2 text-sm text-gray-500 dark:text-gray-400" data-count>{len(models)} models</div>'
     cards = [card(model_id, model_recipes, infos[model_id], metadata[model_id]) for model_id, model_recipes in models.items()]
     return [
         f'<div class="not-prose my-6" {{@attach {CATALOG_SCRIPT}}}>',
@@ -501,19 +424,7 @@ def catalog(models: dict[str, list[dict]], infos: dict[str, dict], metadata: dic
     ]
 
 
-def index_page(models: dict[str, list[dict]], infos: dict[str, dict], metadata: dict[str, dict], publishers: dict[str, str]) -> str:
-    by_org = defaultdict(list)
-    for model_id in models:
-        by_org[infos[model_id]["org"]].append(model_id)
-    featured = sorted((org for org in by_org if org in publishers), key=lambda org: (-len(by_org[org]), infos[by_org[org][0]]["org_name"].lower()))
-    others = sorted((org for org in by_org if org not in publishers), key=lambda org: infos[by_org[org][0]]["org_name"].lower())
-    tiles = "".join(publisher_tile(org, infos[by_org[org][0]], publishers[org], len(by_org[org])) for org in featured)
-    more = "".join(
-        f'<a href="./publishers/{slug(org)}" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1 text-sm '
-        f'text-gray-700 no-underline! hover:border-gray-300 dark:border-gray-800 dark:text-gray-300 dark:hover:border-gray-700">'
-        f'{logo(infos[by_org[org][0]], "size-5")}{esc(infos[by_org[org][0]]["org_name"])}</a>'
-        for org in others
-    )
+def index_page(models: dict[str, list[dict]], infos: dict[str, dict], metadata: dict[str, dict]) -> str:
     lines = [
         "# Overview",
         "",
@@ -525,46 +436,9 @@ def index_page(models: dict[str, list[dict]], infos: dict[str, dict], metadata: 
         "[Deploy a model](./deploy-a-recipe). To learn how the numbers are collected, see "
         "[How deployments are benchmarked](./methodology).",
         "",
-        "## Publishers",
-        "",
-        f'<div class="not-prose my-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">{tiles}</div>',
-        "",
-        f'<div class="not-prose my-4 flex flex-wrap items-center gap-2"><span class="text-sm text-gray-500 dark:text-gray-400">More publishers:</span>{more}</div>'
-        if others
-        else "",
-        "",
-        "## All models",
-        "",
         *catalog(models, infos, metadata),
         "",
     ]
-    return "\n".join(lines)
-
-
-def publisher_page(org: str, model_ids: list[str], models: dict[str, list[dict]], infos: dict[str, dict], metadata: dict[str, dict], description: str | None) -> str:
-    info = infos[model_ids[0]]
-    by_task = defaultdict(list)
-    for model_id in sorted(model_ids, key=lambda model_id: infos[model_id]["created"], reverse=True):
-        by_task[task_label(infos[model_id]["task"])].append(model_id)
-    header = (
-        '<div class="not-prose my-4 flex items-center gap-3">'
-        f"{logo(info, 'size-12')}"
-        f'<span class="text-base text-gray-600 dark:text-gray-300">{esc(description or "")}</span></div>'
-    )
-    lines = [
-        f"# {info['org_name']}",
-        "",
-        GENERATED_NOTE,
-        "",
-        header,
-        "",
-        f"{len(model_ids)} model{'s' if len(model_ids) > 1 else ''} from [{info['org_name']}](https://huggingface.co/{org}) "
-        "with recipes for Amazon SageMaker AI. [Browse all recipes](../index).",
-        "",
-    ]
-    for task in sorted(by_task):
-        cards = [card(model_id, models[model_id], infos[model_id], metadata[model_id]) for model_id in by_task[task]]
-        lines += [f"## {task}", "", f'<div class="not-prose">{card_grid(cards, "../")}</div>', ""]
     return "\n".join(lines)
 
 
@@ -701,7 +575,7 @@ def model_page(model_id: str, recipes: list[dict], info: dict, model: dict) -> s
         "",
         header,
         "",
-        f"[{model_id}](https://huggingface.co/{model_id}) by [{info['org_name']}](./publishers/{slug(info['org'])})"
+        f"[{model_id}](https://huggingface.co/{model_id}) by [{info['org_name']}](https://huggingface.co/{info['org']})"
         + (f": {', '.join(fact for fact in facts if fact)}." if any(facts) else "."),
         "",
         "## Deploy",
@@ -794,7 +668,6 @@ def main() -> None:
         fetch_snapshots()
 
     metadata = load_models()
-    publishers = json.loads(PUBLISHERS.read_text())
     models: dict[str, list[dict]] = defaultdict(list)
     for recipe in sorted(load_recipes(), key=sort_key):
         models[recipe["model_id"]].append(recipe)
@@ -804,14 +677,8 @@ def main() -> None:
         raise SystemExit(f"{MODELS_SNAPSHOT.name} has no entry for: {', '.join(missing)}")
     infos = {model_id: hub_info(model_id) for model_id in models}
 
-    by_org: dict[str, list[str]] = defaultdict(list)
-    for model_id in models:
-        by_org[infos[model_id]["org"]].append(model_id)
-
     pages = {PAGES_DIR / f"{slug(model_id)}.md": model_page(model_id, recipes, infos[model_id], metadata[model_id]) for model_id, recipes in models.items()}
-    for org, model_ids in by_org.items():
-        pages[PUBLISHER_DIR / f"{slug(org)}.md"] = publisher_page(org, model_ids, models, infos, metadata, publishers.get(org))
-    pages[INDEX] = index_page(models, infos, metadata, publishers)
+    pages[INDEX] = index_page(models, infos, metadata)
     for path in sorted(PAGES_DIR.rglob("*.md")):
         if path not in pages and GENERATED_MARKER in path.read_text():
             path.unlink()
@@ -820,19 +687,8 @@ def main() -> None:
         write_if_changed(path, content)
 
     toc_entries = []
-    for org in sorted(by_org, key=lambda org: infos[by_org[org][0]]["org_name"].lower()):
-        toc_entries += [
-            f"    - title: {json.dumps(infos[by_org[org][0]]['org_name'])}",
-            "      isExpanded: false",
-            "      sections:",
-            f"        - local: recipes/publishers/{slug(org)}",
-            "          title: Overview",
-        ]
-        for model_id in by_org[org]:
-            toc_entries += [
-                f"        - local: recipes/{slug(model_id)}",
-                f"          title: {json.dumps(model_id.split('/', 1)[1])}",
-            ]
+    for model_id in sorted(models, key=str.lower):
+        toc_entries += [f"    - local: recipes/{slug(model_id)}", f"      title: {json.dumps(model_id)}"]
     toctree = TOCTREE.read_text()
     write_if_changed(TOCTREE, replace_between(toctree, TOC_START, TOC_END, toc_entries, TOCTREE))
 

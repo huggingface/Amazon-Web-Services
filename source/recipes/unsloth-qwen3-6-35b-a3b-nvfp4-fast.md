@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ecdc18b72a69615d6bd857/E4lkPz1TZNLzIFr_dR273.png" alt="Unsloth logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">Fast NVFP4 35B-total, 3B-active vision-language MoE with reasoning, tool use, MTP, and native 262K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span><span class="rounded-md px-1.5 py-0.5 bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">Vision</span></span></div></div>
 
-[unsloth/Qwen3.6-35B-A3B-NVFP4-Fast](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4-Fast) by [Unsloth](./publishers/unsloth): 35B-A3B parameters, 262,144-token context, license `apache-2.0`.
+[unsloth/Qwen3.6-35B-A3B-NVFP4-Fast](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4-Fast) by [Unsloth](https://huggingface.co/unsloth): 35B-A3B parameters, 262,144-token context, license `apache-2.0`.
 
 ## Deploy
 

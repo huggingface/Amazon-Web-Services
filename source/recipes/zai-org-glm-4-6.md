@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62dc173789b4cf157d36ebee/i_pxzM2ZDo3Ub-BEgIkE9.png" alt="Z.ai logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">A 357B GLM 4.6 model for tool use, reasoning with 203K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span></span></div></div>
 
-[zai-org/GLM-4.6](https://huggingface.co/zai-org/GLM-4.6) by [Z.ai](./publishers/zai-org): 357B parameters, 202,752-token context, license `mit`.
+[zai-org/GLM-4.6](https://huggingface.co/zai-org/GLM-4.6) by [Z.ai](https://huggingface.co/zai-org): 357B parameters, 202,752-token context, license `mit`.
 
 ## Deploy
 

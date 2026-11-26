@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/WtA3YYitedOr9n02eHfJe.png" alt="Google logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">An 8B (4B effective) Gemma 4 instruction model for text, image, and audio input, reasoning, tools, and 128K context.</span><span class="flex flex-wrap gap-1.5 text-xs"><span class="rounded-md px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">Tools</span><span class="rounded-md px-1.5 py-0.5 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300">Reasoning</span><span class="rounded-md px-1.5 py-0.5 bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300">Vision</span><span class="rounded-md px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">Audio</span></span></div></div>
 
-[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it) by [Google](./publishers/google): 8B parameters, 131,072-token context, license `apache-2.0`.
+[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it) by [Google](https://huggingface.co/google): 8B parameters, 131,072-token context, license `apache-2.0`.
 
 ## Deploy
 

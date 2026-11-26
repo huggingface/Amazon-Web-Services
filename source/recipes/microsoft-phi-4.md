@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt="Microsoft logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">A 14B dense decoder-only model for instruction following, math, coding, and advanced reasoning with 16K context.</span><span class="flex flex-wrap gap-1.5 text-xs"></span></div></div>
 
-[microsoft/phi-4](https://huggingface.co/microsoft/phi-4) by [Microsoft](./publishers/microsoft): 15B parameters, 16,384-token context, license `mit`.
+[microsoft/phi-4](https://huggingface.co/microsoft/phi-4) by [Microsoft](https://huggingface.co/microsoft): 15B parameters, 16,384-token context, license `mit`.
 
 ## Deploy
 

@@ -4,7 +4,7 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60538e733efc404ddc7c0c0d/KNnLPW5-_JjQfFwARMmPX.png" alt="Language Technologies Laboratory @ Barcelona Supercomputing Center logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">A 40B ALIA multilingual instruction model for chat, translation, summarization, QA, and 164K-context text generation.</span><span class="flex flex-wrap gap-1.5 text-xs"></span></div></div>
 
-[BSC-LT/ALIA-40b-instruct-2606](https://huggingface.co/BSC-LT/ALIA-40b-instruct-2606) by [Language Technologies Laboratory @ Barcelona Supercomputing Center](./publishers/bsc-lt): 40B parameters, 163,840-token context, license `apache-2.0`.
+[BSC-LT/ALIA-40b-instruct-2606](https://huggingface.co/BSC-LT/ALIA-40b-instruct-2606) by [Language Technologies Laboratory @ Barcelona Supercomputing Center](https://huggingface.co/BSC-LT): 40B parameters, 163,840-token context, license `apache-2.0`.
 
 ## Deploy
 
