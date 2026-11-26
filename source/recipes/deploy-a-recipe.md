@@ -1,9 +1,9 @@
-# Deploy a recipe
+# Deploy a model
 
-This tutorial deploys a recipe from the [catalog](./index) as an Amazon SageMaker AI real-time endpoint, sends it chat requests, and deletes it. Every model page has up to three ways to deploy each recipe, with its values filled in:
+This tutorial deploys a recipe from the [catalog](./index) as an Amazon SageMaker AI real-time endpoint, sends it chat requests, and deletes it. There are three ways to deploy a recipe:
 
-- **AWS console**: one link opens AWS CloudFormation with the recipe template and settings filled in, and you only choose **Create stack**.
-- **AWS CLI**: commands that create the same CloudFormation stack, or the SageMaker resources directly when a recipe has no template yet.
+- **AWS console**: the **Deploy on SageMaker** button on a model page opens AWS CloudFormation with the recipe template and settings filled in, and you only choose **Create stack**.
+- **AWS CLI**: the command on a model page creates the same CloudFormation stack.
 - **Python**: boto3 calls the SageMaker APIs directly, without CloudFormation.
 
 The examples below deploy [Qwen/Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B) in the `us-east-1` region. Open the model page of the recipe you want for the exact values: the template URL, the default endpoint name, and the instance type.

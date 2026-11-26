@@ -1,4 +1,4 @@
-# How recipes are measured
+# How deployments are benchmarked
 
 A recipe is a tested way to serve one Hub model on one Amazon SageMaker AI instance. It pins everything that changes the result:
 
@@ -7,11 +7,9 @@ A recipe is a tested way to serve one Hub model on one Amazon SageMaker AI insta
 - **Instance**: the SageMaker instance type, for example `ml.g6e.12xlarge` with 4 NVIDIA L40S GPUs.
 - **Engine settings**: the `SM_VLLM_*` environment variables passed to the container. Each one maps to a vLLM engine argument, so `SM_VLLM_TENSOR_PARALLEL_SIZE=4` becomes `--tensor-parallel-size 4`.
 - **Endpoint settings**: the inference AMI version (`al2023-ami-sagemaker-inference-gpu-4-1` for the CUDA 13 images) and the container startup health check timeout.
-- **Results**: for recipes measured on SageMaker, the validation checks and benchmark numbers Hugging Face measured on a real SageMaker endpoint with these exact settings.
+- **Results**: the validation checks and benchmark numbers measured on a SageMaker endpoint with these exact settings, when available.
 
-Hugging Face maintains the recipes in Kitchen, its benchmarking service, and regenerates the [recipes catalog](./index) and the model pages from them every day. Each recipe also has an AWS CloudFormation template that the deploy buttons and AWS CLI commands use.
-
-A recipe is either measured on SageMaker or not measured yet. A measured recipe was deployed as a SageMaker real-time endpoint and tested through the SageMaker runtime, so its numbers include the SageMaker front end and not only the engine. A recipe that is not measured yet comes from a Kitchen configuration for the same GPUs: it has the same deploy options, but no validation or benchmark results until it runs on SageMaker.
+Each deployment also has an AWS CloudFormation template that the deploy buttons and AWS CLI commands use. Benchmarks run against a SageMaker real-time endpoint through the SageMaker runtime, so the numbers include the SageMaker front end and not only the engine.
 
 ## Validation
 

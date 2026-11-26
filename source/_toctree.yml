@@ -14,11 +14,11 @@
   isExpanded: true
 - sections:
     - local: recipes/index
-      title: Catalog
+      title: Overview
     - local: recipes/deploy-a-recipe
-      title: Deploy a recipe
+      title: Deploy a model
     - local: recipes/methodology
-      title: How recipes are measured
+      title: How deployments are benchmarked
 # GENERATED RECIPES DO NOT EDIT!
     - title: "BottleCapAI"
       isExpanded: false
