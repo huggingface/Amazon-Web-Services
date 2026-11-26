@@ -91,6 +91,7 @@ CAPABILITIES = [
 ]
 NEUTRAL_CHIP = "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
 NA = "n/a"
+TRENDING_IN_MENU = 5
 LOGO_STYLE = 'style="background-color: #fff"'
 LOGO_CLASS = "shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"
 
@@ -281,7 +282,7 @@ def owner_profile(owner: str) -> dict:
 
 
 def hub_info(model_id: str) -> dict:
-    query = "&".join(f"expand[]={field}" for field in ["gated", "pipeline_tag", "safetensors", "cardData", "createdAt"])
+    query = "&".join(f"expand[]={field}" for field in ["gated", "pipeline_tag", "safetensors", "cardData", "createdAt", "trendingScore"])
     url = f"{HUB_API}{model_id}?{urllib.parse.quote(query, safe='=&')}"
     with urllib.request.urlopen(url, timeout=30) as response:
         info = json.load(response)
@@ -297,6 +298,7 @@ def hub_info(model_id: str) -> dict:
         "parameters": (info.get("safetensors") or {}).get("total"),
         "license": card.get("license"),
         "created": (info.get("createdAt") or "")[:10],
+        "trending": info.get("trendingScore") or 0,
     }
 
 
@@ -686,9 +688,10 @@ def main() -> None:
     for path, content in pages.items():
         write_if_changed(path, content)
 
-    toc_entries = []
-    for model_id in sorted(models, key=str.lower):
-        toc_entries += [f"    - local: recipes/{slug(model_id)}", f"      title: {json.dumps(model_id)}"]
+    trending = sorted(models, key=lambda model_id: (-infos[model_id]["trending"], model_id.lower()))[:TRENDING_IN_MENU]
+    toc_entries = ["    - title: Trending models", "      isExpanded: true", "      sections:"]
+    for model_id in trending:
+        toc_entries += [f"        - local: recipes/{slug(model_id)}", f"          title: {json.dumps(model_id)}"]
     toctree = TOCTREE.read_text()
     write_if_changed(TOCTREE, replace_between(toctree, TOC_START, TOC_END, toc_entries, TOCTREE))
 

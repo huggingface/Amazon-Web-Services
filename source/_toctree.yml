@@ -20,122 +20,19 @@
     - local: recipes/methodology
       title: How deployments are benchmarked
 # GENERATED RECIPES DO NOT EDIT!
-    - local: recipes/bottlecapai-thinkingcap-qwen3-6-27b
-      title: "bottlecapai/ThinkingCap-Qwen3.6-27B"
-    - local: recipes/bsc-lt-alia-40b-instruct-2606
-      title: "BSC-LT/ALIA-40b-instruct-2606"
-    - local: recipes/deepreinforce-ai-ornith-1-0-9b
-      title: "deepreinforce-ai/Ornith-1.0-9B"
-    - local: recipes/deepseek-ai-deepseek-v4-flash-0731
-      title: "deepseek-ai/DeepSeek-V4-Flash-0731"
-    - local: recipes/deepseek-ai-deepseek-v4-1-flash
-      title: "deepseek-ai/DeepSeek-V4.1-Flash"
-    - local: recipes/deepseek-ai-deepseek-v4-1-flash-1017
-      title: "deepseek-ai/DeepSeek-V4.1-Flash-1017"
-    - local: recipes/google-gemma-4-26b-a4b-it
-      title: "google/gemma-4-26B-A4B-it"
-    - local: recipes/google-gemma-4-31b-it
-      title: "google/gemma-4-31B-it"
-    - local: recipes/google-gemma-4-e4b-it
-      title: "google/gemma-4-E4B-it"
-    - local: recipes/huggingfacetb-smollm3-3b
-      title: "HuggingFaceTB/SmolLM3-3B"
-    - local: recipes/ibm-granite-granite-4-0-tiny-preview
-      title: "ibm-granite/granite-4.0-tiny-preview"
-    - local: recipes/liquidai-lfm2-5-2-6b
-      title: "LiquidAI/LFM2.5-2.6B"
-    - local: recipes/meta-llama-llama-3-1-8b-instruct
-      title: "meta-llama/Llama-3.1-8B-Instruct"
-    - local: recipes/meta-llama-meta-llama-3-8b-instruct
-      title: "meta-llama/Meta-Llama-3-8B-Instruct"
-    - local: recipes/meta-models-muse-glimmer-30b
-      title: "meta-models/Muse-Glimmer-30B"
-    - local: recipes/microsoft-fara1-5-9b
-      title: "microsoft/Fara1.5-9B"
-    - local: recipes/microsoft-mediphi
-      title: "microsoft/MediPhi"
-    - local: recipes/microsoft-phi-4
-      title: "microsoft/phi-4"
-    - local: recipes/minimaxai-minimax-m3
-      title: "MiniMaxAI/MiniMax-M3"
-    - local: recipes/minimaxai-minimax-m3-1-flash
-      title: "MiniMaxAI/MiniMax-M3.1-Flash"
-    - local: recipes/mistralai-mistral-7b-instruct-v0-2
-      title: "mistralai/Mistral-7B-Instruct-v0.2"
-    - local: recipes/nanbeige-nanbeige4-3-33b
-      title: "Nanbeige/Nanbeige4.3-33B"
-    - local: recipes/nvidia-nvidia-nemotron-3-ultra-550b-a55b-nvfp4
-      title: "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4"
-    - local: recipes/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16
-      title: "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16"
-    - local: recipes/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-nvfp4
-      title: "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4"
-    - local: recipes/nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4
-      title: "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4"
-    - local: recipes/nvidia-qwen3-6-27b-nvfp4
-      title: "nvidia/Qwen3.6-27B-NVFP4"
-    - local: recipes/openai-gpt-oss-20b
-      title: "openai/gpt-oss-20b"
-    - local: recipes/ornith-ai-ornith-1-5-122b-nvfp4
-      title: "ornith-ai/Ornith-1.5-122B-NVFP4"
-    - local: recipes/poolside-laguna-m-1
-      title: "poolside/Laguna-M.1"
-    - local: recipes/poolside-laguna-xs-2-1-fp8
-      title: "poolside/Laguna-XS-2.1-FP8"
-    - local: recipes/qwen-qwen2-5-7b-instruct
-      title: "Qwen/Qwen2.5-7B-Instruct"
-    - local: recipes/qwen-qwen3-14b
-      title: "Qwen/Qwen3-14B"
-    - local: recipes/qwen-qwen3-4b-instruct-2507
-      title: "Qwen/Qwen3-4B-Instruct-2507"
-    - local: recipes/qwen-qwen3-8b
-      title: "Qwen/Qwen3-8B"
-    - local: recipes/qwen-qwen3-vl-235b-a22b-instruct
-      title: "Qwen/Qwen3-VL-235B-A22B-Instruct"
-    - local: recipes/qwen-qwen3-vl-8b-instruct
-      title: "Qwen/Qwen3-VL-8B-Instruct"
-    - local: recipes/qwen-qwen3-5-397b-a17b
-      title: "Qwen/Qwen3.5-397B-A17B"
-    - local: recipes/qwen-qwen3-5-397b-a17b-fp8
-      title: "Qwen/Qwen3.5-397B-A17B-FP8"
-    - local: recipes/qwen-qwen3-5-4b
-      title: "Qwen/Qwen3.5-4B"
-    - local: recipes/qwen-qwen3-5-9b
-      title: "Qwen/Qwen3.5-9B"
-    - local: recipes/qwen-qwen3-6-27b
-      title: "Qwen/Qwen3.6-27B"
-    - local: recipes/qwen-qwen3-6-35b-a3b
-      title: "Qwen/Qwen3.6-35B-A3B"
-    - local: recipes/qwen-qwen3-8-27b
-      title: "Qwen/Qwen3.8-27B"
-    - local: recipes/qwen-qwq-32b
-      title: "Qwen/QwQ-32B"
-    - local: recipes/reflection-beam-1-0-501b-a23b-fp8
-      title: "reflection/Beam-1.0-501B-A23B-FP8"
-    - local: recipes/reflection-beam-1-0-501b-a23b-nvfp4
-      title: "reflection/Beam-1.0-501B-A23B-NVFP4"
-    - local: recipes/tencent-hy3
-      title: "tencent/Hy3"
-    - local: recipes/unsloth-qwen3-6-35b-a3b-nvfp4-fast
-      title: "unsloth/Qwen3.6-35B-A3B-NVFP4-Fast"
-    - local: recipes/xiaomimimo-mimo-v2-6-flash-rl
-      title: "XiaomiMiMo/MiMo-V2.6-Flash-RL"
-    - local: recipes/zai-org-glm-4-5-air
-      title: "zai-org/GLM-4.5-Air"
-    - local: recipes/zai-org-glm-4-5-fp8
-      title: "zai-org/GLM-4.5-FP8"
-    - local: recipes/zai-org-glm-4-6
-      title: "zai-org/GLM-4.6"
-    - local: recipes/zai-org-glm-4-7
-      title: "zai-org/GLM-4.7"
-    - local: recipes/zai-org-glm-4-7-fp8
-      title: "zai-org/GLM-4.7-FP8"
-    - local: recipes/zai-org-glm-5-2-fp8
-      title: "zai-org/GLM-5.2-FP8"
-    - local: recipes/zai-org-glm-5-3
-      title: "zai-org/GLM-5.3"
-    - local: recipes/zai-org-glm-5-3-flash
-      title: "zai-org/GLM-5.3-Flash"
+    - title: Trending models
+      isExpanded: true
+      sections:
+        - local: recipes/qwen-qwen3-8-27b
+          title: "Qwen/Qwen3.8-27B"
+        - local: recipes/deepseek-ai-deepseek-v4-1-flash-1017
+          title: "deepseek-ai/DeepSeek-V4.1-Flash-1017"
+        - local: recipes/meta-llama-meta-llama-3-8b-instruct
+          title: "meta-llama/Meta-Llama-3-8B-Instruct"
+        - local: recipes/meta-llama-llama-3-1-8b-instruct
+          title: "meta-llama/Llama-3.1-8B-Instruct"
+        - local: recipes/zai-org-glm-5-3
+          title: "zai-org/GLM-5.3"
 # END GENERATED RECIPES
   title: Recipes
   isExpanded: true
