@@ -20,19 +20,6 @@
     - local: recipes/methodology
       title: How deployments are benchmarked
 # GENERATED RECIPES DO NOT EDIT!
-    - title: Trending models
-      isExpanded: true
-      sections:
-        - local: recipes/qwen-qwen3-8-27b
-          title: "Qwen/Qwen3.8-27B"
-        - local: recipes/deepseek-ai-deepseek-v4-1-flash-1017
-          title: "deepseek-ai/DeepSeek-V4.1-Flash-1017"
-        - local: recipes/meta-llama-meta-llama-3-8b-instruct
-          title: "meta-llama/Meta-Llama-3-8B-Instruct"
-        - local: recipes/meta-llama-llama-3-1-8b-instruct
-          title: "meta-llama/Llama-3.1-8B-Instruct"
-        - local: recipes/zai-org-glm-5-3
-          title: "zai-org/GLM-5.3"
 # END GENERATED RECIPES
   title: Recipes
   isExpanded: true

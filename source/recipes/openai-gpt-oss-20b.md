@@ -8,27 +8,51 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g6e.2xlarge">
+<hfoption id="NVIDIA L40S (ml.g6e.2xlarge)">
 
-**$2.80 per hour** · 1 x NVIDIA L40S · 131,072-token context · vLLM 0.34.0
+**$2.80 per hour**, 131,072-token context, vLLM 0.34.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g6e-2xlarge-vllm-tp1-8ebad822cc.json" data-stack="gpt-oss-20b-g6e-2xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fopenai-gpt-oss-20b%2Fg6e-2xlarge-vllm-tp1-8ebad822cc.json&amp;stackName=gpt-oss-20b-g6e-2xlarge&amp;param_EndpointName=gpt-oss-20b-g6e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fopenai-gpt-oss-20b%2Fg6e-2xlarge-vllm-tp1-8ebad822cc.json&amp;stackName=gpt-oss-20b-g6e-2xlarge&amp;param_EndpointName=gpt-oss-20b-g6e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g6e-2xlarge-vllm-tp1-8ebad822cc.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name gpt-oss-20b-g6e-2xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g6e-2xlarge-vllm-tp1-8ebad822cc.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=gpt-oss-20b-g6e-2xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g6e-2xlarge-vllm-tp1-8ebad822cc.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=gpt-oss-20b-g6e-2xlarge
 ```
 
-**Performance**
+</hfoption>
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+
+**$4.20 per hour**, 131,072-token context, vLLM 0.25.1
+
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
+
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fopenai-gpt-oss-20b%2Fg7e-2xlarge-vllm-tp1-6be80c17a5.json&amp;stackName=gpt-oss-20b-g7e-2xlarge&amp;param_EndpointName=gpt-oss-20b-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g7e-2xlarge-vllm-tp1-6be80c17a5.json" class="btn h-9">Copy template URL</button></div>
+
+</div>
+
+```bash
+aws cloudformation create-stack --region us-east-1 --stack-name gpt-oss-20b-g7e-2xlarge \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g7e-2xlarge-vllm-tp1-6be80c17a5.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=gpt-oss-20b-g7e-2xlarge
+```
+
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA L40S (ml.g6e.2xlarge)">
 
 | Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
 |---|---:|---:|---:|---:|---:|
@@ -38,27 +62,52 @@ aws cloudformation create-stack --region us-east-1 --stack-name gpt-oss-20b-g6e-
 | Shared prompt prefix | 32 | 52 | 0.17 s | 1,324 | $0.59 |
 | Real conversations | 256 | 29 | 0.31 s | 5,199 | $0.15 |
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm</code>, pinned to <code>sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.95</code></td></tr><tr><td><code>SM_VLLM_MAX_CUDAGRAPH_CAPTURE_SIZE</code></td><td><code>2048</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>131072</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>openai/gpt-oss-20b</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>openai_gptoss</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>6cee5e81ee83917806bbde320786a8fb61efebee</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>openai/gpt-oss-20b</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>openai</code></td></tr></tbody></table></details>
+</hfoption>
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+
+No benchmark results for this instance yet.
 
 </hfoption>
-<hfoption id="ml.g7e.2xlarge">
+</hfoptions>
 
-**$4.20 per hour** · 1 x NVIDIA RTX PRO 6000 · 131,072-token context · vLLM 0.25.1
+## Engine settings
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<hfoptions id="instance">
+<hfoption id="NVIDIA L40S (ml.g6e.2xlarge)">
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g7e-2xlarge-vllm-tp1-6be80c17a5.json" data-stack="gpt-oss-20b-g7e-2xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fopenai-gpt-oss-20b%2Fg7e-2xlarge-vllm-tp1-6be80c17a5.json&amp;stackName=gpt-oss-20b-g7e-2xlarge&amp;param_EndpointName=gpt-oss-20b-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
-</div>
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.95` |
+| `SM_VLLM_MAX_CUDAGRAPH_CAPTURE_SIZE` | `2048` |
+| `SM_VLLM_MAX_MODEL_LEN` | `131072` |
+| `SM_VLLM_MODEL` | `openai/gpt-oss-20b` |
+| `SM_VLLM_REASONING_PARSER` | `openai_gptoss` |
+| `SM_VLLM_REVISION` | `6cee5e81ee83917806bbde320786a8fb61efebee` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `openai/gpt-oss-20b` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `openai` |
 
-```bash
-aws cloudformation create-stack --region us-east-1 --stack-name gpt-oss-20b-g7e-2xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/openai-gpt-oss-20b/g7e-2xlarge-vllm-tp1-6be80c17a5.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=gpt-oss-20b-g7e-2xlarge
-```
+</hfoption>
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
-<details><summary>Container and engine settings</summary><p>Image <code>vllm</code>, pinned to <code>sha256:59c0464662843a0ddafe56fb2862a0136094d8695ec53eeda73557d2a91201cf</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.95</code></td></tr><tr><td><code>SM_VLLM_MAX_CUDAGRAPH_CAPTURE_SIZE</code></td><td><code>2048</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>131072</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>openai/gpt-oss-20b</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>openai_gptoss</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>6cee5e81ee83917806bbde320786a8fb61efebee</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>openai/gpt-oss-20b</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>openai</code></td></tr></tbody></table></details>
+Container `vllm`, pinned to `sha256:59c0464662843a0ddafe56fb2862a0136094d8695ec53eeda73557d2a91201cf`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.95` |
+| `SM_VLLM_MAX_CUDAGRAPH_CAPTURE_SIZE` | `2048` |
+| `SM_VLLM_MAX_MODEL_LEN` | `131072` |
+| `SM_VLLM_MODEL` | `openai/gpt-oss-20b` |
+| `SM_VLLM_REASONING_PARSER` | `openai_gptoss` |
+| `SM_VLLM_REVISION` | `6cee5e81ee83917806bbde320786a8fb61efebee` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `openai/gpt-oss-20b` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `openai` |
 
 </hfoption>
 </hfoptions>

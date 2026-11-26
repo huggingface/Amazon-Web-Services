@@ -8,27 +8,33 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g6e.48xlarge">
+<hfoption id="8x NVIDIA L40S (ml.g6e.48xlarge)">
 
-**$37.66 per hour** · 8 x NVIDIA L40S · 32,768-token context · vLLM 0.34.0
+**$37.66 per hour**, 32,768-token context, vLLM 0.34.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-4-5-air/g6e-48xlarge-vllm-tp8-886b3f8e22.json" data-stack="glm-4-5-air-g6e-48xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fzai-org-glm-4-5-air%2Fg6e-48xlarge-vllm-tp8-886b3f8e22.json&amp;stackName=glm-4-5-air-g6e-48xlarge&amp;param_EndpointName=glm-4-5-air-g6e-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fzai-org-glm-4-5-air%2Fg6e-48xlarge-vllm-tp8-886b3f8e22.json&amp;stackName=glm-4-5-air-g6e-48xlarge&amp;param_EndpointName=glm-4-5-air-g6e-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-4-5-air/g6e-48xlarge-vllm-tp8-886b3f8e22.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name glm-4-5-air-g6e-48xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-4-5-air/g6e-48xlarge-vllm-tp8-886b3f8e22.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=glm-4-5-air-g6e-48xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-4-5-air/g6e-48xlarge-vllm-tp8-886b3f8e22.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=glm-4-5-air-g6e-48xlarge
 ```
 
-**Performance**
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="8x NVIDIA L40S (ml.g6e.48xlarge)">
 
 | Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
 |---|---:|---:|---:|---:|---:|
@@ -39,7 +45,30 @@ aws cloudformation create-stack --region us-east-1 --stack-name glm-4-5-air-g6e-
 | Shared prompt prefix | 32 | 12 | 1.84 s | 270 | $38.77 |
 | Real conversations | 256 | 13 | 114.28 s | 386 | $27.14 |
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm</code>, pinned to <code>sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.95</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>32768</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_SEQS</code></td><td><code>32</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>zai-org/GLM-4.5-Air</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>glm45</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>a24ceef6ce4f3536971efe9b778bdaa1bab18daa</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>zai-org/GLM-4.5-Air</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>8</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>glm45</code></td></tr><tr><td><code>VLLM_ENGINE_READY_TIMEOUT_S</code></td><td><code>3600</code></td></tr></tbody></table></details>
+</hfoption>
+</hfoptions>
+
+## Engine settings
+
+<hfoptions id="instance">
+<hfoption id="8x NVIDIA L40S (ml.g6e.48xlarge)">
+
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.95` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
+| `SM_VLLM_MODEL` | `zai-org/GLM-4.5-Air` |
+| `SM_VLLM_REASONING_PARSER` | `glm45` |
+| `SM_VLLM_REVISION` | `a24ceef6ce4f3536971efe9b778bdaa1bab18daa` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `zai-org/GLM-4.5-Air` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `8` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `glm45` |
+| `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
 
 </hfoption>
 </hfoptions>

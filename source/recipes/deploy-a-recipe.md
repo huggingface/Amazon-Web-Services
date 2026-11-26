@@ -42,9 +42,9 @@ NAME=qwen3-8b-g6e-xlarge
 TEMPLATE_URL=https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/...
 
 aws cloudformation create-stack --region "$REGION" --stack-name "$NAME" \
-  --template-url "$TEMPLATE_URL" \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue="$NAME"
+    --template-url "$TEMPLATE_URL" \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue="$NAME"
 
 # returns when the endpoint is InService; run it again if it times out after one hour
 aws cloudformation wait stack-create-complete --region "$REGION" --stack-name "$NAME"

@@ -8,47 +8,107 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g7e.2xlarge">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
-**$4.20 per hour** · 1 x NVIDIA RTX PRO 6000 · 65,536-token context · vLLM 0.29.0
+**$4.20 per hour**, 65,536-token context, vLLM 0.29.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-844460379a.json" data-stack="muse-glimmer-30b-g7e-2xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fmeta-models-muse-glimmer-30b%2Fg7e-2xlarge-vllm-tp1-844460379a.json&amp;stackName=muse-glimmer-30b-g7e-2xlarge&amp;param_EndpointName=muse-glimmer-30b-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fmeta-models-muse-glimmer-30b%2Fg7e-2xlarge-vllm-tp1-844460379a.json&amp;stackName=muse-glimmer-30b-g7e-2xlarge&amp;param_EndpointName=muse-glimmer-30b-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-844460379a.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name muse-glimmer-30b-g7e-2xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-844460379a.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=muse-glimmer-30b-g7e-2xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-844460379a.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=muse-glimmer-30b-g7e-2xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>vllm</code>, pinned to <code>sha256:8149cac72c6b972e999c389006a06a3849d9eddf23990bea150132e577d079ae</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_CHUNKED_PREFILL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PREFIX_CACHING</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GENERATION_CONFIG</code></td><td><code>auto</code></td></tr><tr><td><code>SM_VLLM_KV_CACHE_DTYPE</code></td><td><code>fp8</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>65536</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_SEQS</code></td><td><code>64</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>meta-models/Muse-Glimmer-30B</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>muse_glimmer</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>a4e59da52a7bc87ae7251dd5545c0dd437c44b68</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>meta-models/Muse-Glimmer-30B</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>muse_glimmer</code></td></tr></tbody></table></details>
-
 </hfoption>
-<hfoption id="ml.g7e.48xlarge">
+<hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
 
-**$41.43 per hour** · 8 x NVIDIA RTX PRO 6000 · 131,072-token context · vLLM 0.29.0
+**$41.43 per hour**, 131,072-token context, vLLM 0.29.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-48xlarge-vllm-tp2-dp4-16e449665e.json" data-stack="muse-glimmer-30b-g7e-48xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fmeta-models-muse-glimmer-30b%2Fg7e-48xlarge-vllm-tp2-dp4-16e449665e.json&amp;stackName=muse-glimmer-30b-g7e-48xlarge&amp;param_EndpointName=muse-glimmer-30b-g7e-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fmeta-models-muse-glimmer-30b%2Fg7e-48xlarge-vllm-tp2-dp4-16e449665e.json&amp;stackName=muse-glimmer-30b-g7e-48xlarge&amp;param_EndpointName=muse-glimmer-30b-g7e-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-48xlarge-vllm-tp2-dp4-16e449665e.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name muse-glimmer-30b-g7e-48xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-48xlarge-vllm-tp2-dp4-16e449665e.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=muse-glimmer-30b-g7e-48xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-48xlarge-vllm-tp2-dp4-16e449665e.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=muse-glimmer-30b-g7e-48xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>vllm</code>, pinned to <code>sha256:8149cac72c6b972e999c389006a06a3849d9eddf23990bea150132e577d079ae</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_DATA_PARALLEL_SIZE</code></td><td><code>4</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_CHUNKED_PREFILL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PREFIX_CACHING</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GENERATION_CONFIG</code></td><td><code>auto</code></td></tr><tr><td><code>SM_VLLM_KV_CACHE_DTYPE</code></td><td><code>fp8</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>131072</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_SEQS</code></td><td><code>64</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>meta-models/Muse-Glimmer-30B</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>muse_glimmer</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>a4e59da52a7bc87ae7251dd5545c0dd437c44b68</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>meta-models/Muse-Glimmer-30B</code></td></tr><tr><td><code>SM_VLLM_SPECULATIVE_CONFIG</code></td><td><code>&#123;&quot;method&quot;:&quot;dflash&quot;,&quot;model&quot;:&quot;meta-models/Muse-Glimmer-30B-assistant&quot;,&quot;num_speculative_tokens&quot;:15}</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>2</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>muse_glimmer</code></td></tr></tbody></table></details>
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+</hfoptions>
+
+## Engine settings
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+
+Container `vllm`, pinned to `sha256:8149cac72c6b972e999c389006a06a3849d9eddf23990bea150132e577d079ae`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_CHUNKED_PREFILL` | `true` |
+| `SM_VLLM_ENABLE_PREFIX_CACHING` | `true` |
+| `SM_VLLM_GENERATION_CONFIG` | `auto` |
+| `SM_VLLM_KV_CACHE_DTYPE` | `fp8` |
+| `SM_VLLM_MAX_MODEL_LEN` | `65536` |
+| `SM_VLLM_MAX_NUM_SEQS` | `64` |
+| `SM_VLLM_MODEL` | `meta-models/Muse-Glimmer-30B` |
+| `SM_VLLM_REASONING_PARSER` | `muse_glimmer` |
+| `SM_VLLM_REVISION` | `a4e59da52a7bc87ae7251dd5545c0dd437c44b68` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `meta-models/Muse-Glimmer-30B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `muse_glimmer` |
+
+</hfoption>
+<hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
+
+Container `vllm`, pinned to `sha256:8149cac72c6b972e999c389006a06a3849d9eddf23990bea150132e577d079ae`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_DATA_PARALLEL_SIZE` | `4` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_CHUNKED_PREFILL` | `true` |
+| `SM_VLLM_ENABLE_PREFIX_CACHING` | `true` |
+| `SM_VLLM_GENERATION_CONFIG` | `auto` |
+| `SM_VLLM_KV_CACHE_DTYPE` | `fp8` |
+| `SM_VLLM_MAX_MODEL_LEN` | `131072` |
+| `SM_VLLM_MAX_NUM_SEQS` | `64` |
+| `SM_VLLM_MODEL` | `meta-models/Muse-Glimmer-30B` |
+| `SM_VLLM_REASONING_PARSER` | `muse_glimmer` |
+| `SM_VLLM_REVISION` | `a4e59da52a7bc87ae7251dd5545c0dd437c44b68` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `meta-models/Muse-Glimmer-30B` |
+| `SM_VLLM_SPECULATIVE_CONFIG` | `{"method":"dflash","model":"meta-models/Muse-Glimmer-30B-assistant","num_speculative_tokens":15}` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `2` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `muse_glimmer` |
 
 </hfoption>
 </hfoptions>

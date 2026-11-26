@@ -59,21 +59,6 @@ IMAGE_PATTERN = re.compile(
 )
 
 DEFAULT_REGION = "us-east-1"
-REGIONS = [
-    ("us-east-1", "US East (N. Virginia)"),
-    ("us-east-2", "US East (Ohio)"),
-    ("us-west-2", "US West (Oregon)"),
-    ("ca-central-1", "Canada (Central)"),
-    ("eu-west-1", "Europe (Ireland)"),
-    ("eu-west-2", "Europe (London)"),
-    ("eu-central-1", "Europe (Frankfurt)"),
-    ("eu-north-1", "Europe (Stockholm)"),
-    ("ap-south-1", "Asia Pacific (Mumbai)"),
-    ("ap-northeast-1", "Asia Pacific (Tokyo)"),
-    ("ap-northeast-2", "Asia Pacific (Seoul)"),
-    ("ap-southeast-1", "Asia Pacific (Singapore)"),
-    ("ap-southeast-2", "Asia Pacific (Sydney)"),
-]
 
 SUITES = [
     ("single-request", "One user"),
@@ -91,7 +76,7 @@ CAPABILITIES = [
 ]
 NEUTRAL_CHIP = "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
 NA = "n/a"
-TRENDING_IN_MENU = 5
+TRENDING_ON_OVERVIEW = 6
 LOGO_STYLE = 'style="background-color: #fff"'
 LOGO_CLASS = "shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"
 
@@ -100,54 +85,37 @@ CATALOG_SCRIPT = " ".join(
 (root) => {
 const grid = root.querySelector("[data-grid]");
 const cards = Array.from(grid.children);
-const controls = Array.from(root.querySelectorAll("[data-filter]"));
-const params = new URLSearchParams(window.location.search);
-for (const control of controls) { const saved = params.get(control.name); if (saved !== null) { control.value = saved; } }
+const search = root.querySelector("input[name=q]");
+const saved = new URLSearchParams(window.location.search).get("q");
+if (saved !== null) { search.value = saved; }
 const apply = () => {
-const f = Object.fromEntries(controls.map((control) => [control.name, control.value]));
-const text = f.q.trim().toLowerCase();
+const text = search.value.trim().toLowerCase();
 let shown = 0;
 for (const card of cards) {
-const match = (!text || card.dataset.search.includes(text))
-&& (!f.org || card.dataset.org === f.org)
-&& (!f.gpu || card.dataset.gpus.split(" ").includes(f.gpu));
+const match = !text || card.dataset.search.includes(text);
 card.hidden = !match;
 if (match) { shown += 1; }
 }
 root.querySelector("[data-count]").textContent = shown === cards.length ? cards.length + " models" : shown + " of " + cards.length + " models";
 root.querySelector("[data-empty]").hidden = shown > 0;
-const query = new URLSearchParams();
-for (const control of controls) { if (control.value) { query.set(control.name, control.value); } }
 const url = new URL(window.location.href);
-url.search = query.toString();
+url.search = text ? new URLSearchParams({ q: search.value.trim() }).toString() : "";
 history.replaceState(history.state, "", url.toString());
 };
-root.addEventListener("input", apply);
-root.addEventListener("change", apply);
+search.addEventListener("input", apply);
 apply();
 }
 """.split()
 )
 
-CONSOLE_SCRIPT = " ".join(
+COPY_SCRIPT = " ".join(
     """
 (root) => {
-const select = root.querySelector("select");
-const link = root.querySelector("a[data-template]");
 const copy = root.querySelector("button[data-copy]");
-const update = () => { link.href = console_url(select.value, link.dataset.template, link.dataset.stack); };
-select.addEventListener("change", update);
-copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); });
-update();
+copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); });
 }
 """.split()
 )
-CONSOLE_URL_JS = (
-    '(region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region'
-    ' + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack'
-    ' + "&param_EndpointName=" + stack'
-)
-CONSOLE_SCRIPT = CONSOLE_SCRIPT.replace("console_url(", f"({CONSOLE_URL_JS})(")
 
 
 def slug(value: str) -> str:
@@ -258,8 +226,12 @@ def load_recipes() -> list[dict]:
     return list(recipes.values())
 
 
+def plain(text: str) -> str:
+    return re.sub(r"\s*[—·]\s*", ", ", text)
+
+
 def load_models() -> dict[str, dict]:
-    return {row["model_id"]: row for row in read_jsonl(MODELS_SNAPSHOT, MODEL_FIELDS)}
+    return {row["model_id"]: {**row, "description": plain(row["description"])} for row in read_jsonl(MODELS_SNAPSHOT, MODEL_FIELDS)}
 
 
 def sort_key(recipe: dict) -> tuple:
@@ -306,13 +278,6 @@ def month(day: str) -> str:
     return datetime.strptime(day, "%Y-%m-%d").strftime("%b %Y") if day else ""
 
 
-def gpu_label(recipe: dict) -> str:
-    instance = recipe["instance"]
-    if not instance["accelerator"]:
-        return NA
-    return f"{instance['gpus']} x {instance['accelerator']}" if instance["gpus"] else instance["accelerator"]
-
-
 def logo(info: dict, size: str) -> str:
     if not info["org_avatar"]:
         return ""
@@ -339,15 +304,11 @@ def card(model_id: str, recipes: list[dict], info: dict, model: dict) -> str:
         footer.append("gated")
     deployable = next((r for r in recipes if r["template_url"]), None)
     details = [
-        ("Instance", f"{cheapest['instance']['type']}, {gpu_label(cheapest)}"),
+        ("Instance", instance_label(cheapest)),
         ("Context", f"{model['context']:,} tokens" if model["context"] else NA),
         ("Released", month(info["created"]) or NA),
     ]
-    data = {
-        "search": f"{model_id.lower()} {info['org_name'].lower()} {model['description'].lower()}",
-        "org": info["org"],
-        "gpus": " ".join(sorted({slug(r["instance"]["accelerator"] or "") for r in recipes})),
-    }
+    data = {"search": f"{model_id.lower()} {info['org_name'].lower()} {model['description'].lower()}"}
     attributes = " ".join(f'data-{key}="{esc(value)}"' for key, value in data.items())
     deploy = (
         f'<a class="btn h-8 no-underline!" target="_blank" rel="noopener" href="{esc(console_url(deployable, DEFAULT_REGION))}">'
@@ -372,7 +333,7 @@ def card(model_id: str, recipes: list[dict], info: dict, model: dict) -> str:
         f'<span class="line-clamp-2 break-all text-lg font-semibold leading-snug text-gray-900 dark:text-gray-100" title="{esc(model_id)}">{esc(model_id.split("/", 1)[1])}</span>'
         f'<span class="line-clamp-2 text-sm text-gray-600 dark:text-gray-300">{esc(model["description"])}</span>'
         f'<span class="flex flex-wrap gap-1.5 text-xs">{chips(model, model["parameters"])}</span>'
-        f'<span class="mt-auto truncate text-sm text-gray-500 dark:text-gray-400">{esc(" · ".join(part for part in footer if part))}</span>'
+        f'<span class="mt-auto truncate text-sm text-gray-500 dark:text-gray-400">{esc(", ".join(part for part in footer if part))}</span>'
         "</summary>"
         '<div class="border-t border-gray-200 px-4 py-3 text-sm dark:border-gray-800">'
         f'<dl class="grid grid-cols-3 gap-x-4 gap-y-1">{rows}</dl>'
@@ -387,46 +348,26 @@ def card_grid(cards: list[str], base: str, extra: str = "") -> str:
     return f'<div {extra}class="mt-4 grid grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3">{"".join(cards).replace("{base}", base)}</div>'
 
 
-def select(name: str, options: list[tuple[str, str]], default: str = "") -> str:
-    rendered = "".join(
-        f'<option value="{esc(value)}"{" selected" if value == default else ""}>{esc(label)}</option>' for value, label in options
-    )
-    return (
-        f'<select data-filter name="{name}" aria-label="{esc(options[0][1])}" class="h-9 w-full rounded-lg border border-gray-200 bg-white '
-        f'px-3 text-sm dark:border-gray-700 dark:bg-gray-950">{rendered}</select>'
-    )
-
-
 def catalog(models: dict[str, list[dict]], infos: dict[str, dict], metadata: dict[str, dict]) -> list[str]:
-    recipes = [recipe for model_recipes in models.values() for recipe in model_recipes]
-    orgs = sorted({(info["org"], info["org_name"]) for info in infos.values()}, key=lambda org: org[1].lower())
-    gpus = sorted({r["instance"]["accelerator"] for r in recipes if r["instance"]["accelerator"]})
-    filters = (
-        '<div class="grid grid-cols-1 gap-2 sm:grid-cols-3">'
-        '<input data-filter type="search" name="q" placeholder="Search models" aria-label="Search models" '
-        'class="h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950">'
-        + select("org", [("", "All publishers"), *orgs])
-        + select("gpu", [("", "All GPUs"), *[(slug(gpu), gpu) for gpu in gpus]])
-        + "</div>"
-    )
-    toggles = f'<div class="mt-2 text-sm text-gray-500 dark:text-gray-400" data-count>{len(models)} models</div>'
     cards = [card(model_id, model_recipes, infos[model_id], metadata[model_id]) for model_id, model_recipes in models.items()]
     return [
         f'<div class="not-prose my-6" {{@attach {CATALOG_SCRIPT}}}>',
         "",
-        filters,
-        "",
-        toggles,
+        '<div><input type="search" name="q" placeholder="Search models" aria-label="Search models" '
+        'class="h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950">'
+        f'<div class="mt-2 text-sm text-gray-500 dark:text-gray-400" data-count>{len(models)} models</div></div>',
         "",
         card_grid(cards, "./", "data-grid "),
         "",
-        '<p data-empty hidden class="mt-4 text-sm text-gray-500">No model matches these filters.</p>',
+        '<p data-empty hidden class="mt-4 text-sm text-gray-500">No model matches your search.</p>',
         "",
         "</div>",
     ]
 
 
 def index_page(models: dict[str, list[dict]], infos: dict[str, dict], metadata: dict[str, dict]) -> str:
+    trending = sorted(models, key=lambda model_id: (-infos[model_id]["trending"], model_id.lower()))[:TRENDING_ON_OVERVIEW]
+    trending_cards = [card(model_id, models[model_id], infos[model_id], metadata[model_id]) for model_id in trending]
     lines = [
         "# Overview",
         "",
@@ -438,6 +379,12 @@ def index_page(models: dict[str, list[dict]], infos: dict[str, dict], metadata: 
         "[Deploy a model](./deploy-a-recipe). To learn how the numbers are collected, see "
         "[How deployments are benchmarked](./methodology).",
         "",
+        "## Trending",
+        "",
+        f'<div class="not-prose">{card_grid(trending_cards, "./")}</div>',
+        "",
+        "## All models",
+        "",
         *catalog(models, infos, metadata),
         "",
     ]
@@ -445,18 +392,12 @@ def index_page(models: dict[str, list[dict]], infos: dict[str, dict], metadata: 
 
 
 def console_block(recipe: dict) -> list[str]:
-    options = "".join(
-        f'<option value="{code}"{" selected" if code == DEFAULT_REGION else ""}>{esc(label)} {code}</option>'
-        for code, label in REGIONS
-    )
     return [
-        f'<div class="not-prose my-4 flex flex-wrap items-center gap-2" {{@attach {CONSOLE_SCRIPT}}}>',
+        f'<div class="not-prose my-4" {{@attach {COPY_SCRIPT}}}>',
         "",
         '<div class="flex flex-wrap items-center gap-2">'
-        f'<select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950">{options}</select>'
-        f'<a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="{esc(recipe["template_url"])}" data-stack="{esc(endpoint_name(recipe))}" '
-        f'href="{esc(console_url(recipe, DEFAULT_REGION))}">Deploy on SageMaker ↗</a>'
-        '<button type="button" data-copy class="btn h-9">Copy template URL</button>'
+        f'<a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="{esc(console_url(recipe, DEFAULT_REGION))}">Deploy on SageMaker ↗</a>'
+        f'<button type="button" data-copy="{esc(recipe["template_url"])}" class="btn h-9">Copy template URL</button>'
         "</div>",
         "",
         "</div>",
@@ -466,13 +407,13 @@ def console_block(recipe: dict) -> list[str]:
 def cli_block(recipe: dict, gated: bool) -> list[str]:
     name = endpoint_name(recipe)
     if recipe["template_url"]:
-        token = ' \\\n    ParameterKey=HuggingFaceToken,ParameterValue="$HF_TOKEN"' if gated else ""
+        token = ' \\\n        ParameterKey=HuggingFaceToken,ParameterValue="$HF_TOKEN"' if gated else ""
         return [
             "```bash",
             f"aws cloudformation create-stack --region {DEFAULT_REGION} --stack-name {name} \\",
-            f"  --template-url {recipe['template_url']} \\",
-            "  --capabilities CAPABILITY_IAM \\",
-            f"  --parameters ParameterKey=EndpointName,ParameterValue={name}{token}",
+            f"    --template-url {recipe['template_url']} \\",
+            "    --capabilities CAPABILITY_IAM \\",
+            f"    --parameters ParameterKey=EndpointName,ParameterValue={name}{token}",
             "```",
         ]
     environment = dict(recipe["deployment"]["environment"])
@@ -496,10 +437,10 @@ def cli_block(recipe: dict, gated: bool) -> list[str]:
     return [
         "```bash",
         f"aws sagemaker create-model --region {DEFAULT_REGION} --model-name {name} \\",
-        "  --execution-role-arn arn:aws:iam::111122223333:role/your-sagemaker-execution-role \\",
-        f"  --primary-container '{container}'",
+        "    --execution-role-arn arn:aws:iam::111122223333:role/your-sagemaker-execution-role \\",
+        f"    --primary-container '{container}'",
         f"aws sagemaker create-endpoint-config --region {DEFAULT_REGION} --endpoint-config-name {name} \\",
-        f"  --production-variants '{variant}'",
+        f"    --production-variants '{variant}'",
         f"aws sagemaker create-endpoint --region {DEFAULT_REGION} --endpoint-name {name} --endpoint-config-name {name}",
         "```",
     ]
@@ -509,7 +450,7 @@ def performance_table(recipe: dict) -> list[str]:
     metrics = {m["suite"]: m for m in recipe["metrics"]}
     rows = [(label, metrics[suite]) for suite, label in SUITES if suite in metrics]
     if not rows:
-        return []
+        return ["No benchmark results for this instance yet."]
     lines = [
         "| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |",
         "|---|---:|---:|---:|---:|---:|",
@@ -520,20 +461,34 @@ def performance_table(recipe: dict) -> list[str]:
             f"| {label} | {fmt(m['concurrency'], 0)} | {fmt(per_user(m), 0)} | {ttft} | {fmt(m['output_throughput'], 0)} | "
             f"{usd(m['cost_per_million_output_tokens_usd'])} |"
         )
-    return ["**Performance**", "", *lines, ""]
+    return lines
 
 
-def settings_block(recipe: dict) -> list[str]:
-    rows = "".join(
-        f"<tr><td><code>{esc(key)}</code></td><td><code>{esc(value)}</code></td></tr>"
-        for key, value in sorted(recipe["deployment"]["environment"].items())
-    )
-    image = f"{recipe['image']['repository']}:{recipe['image']['tag']}" if recipe["image"]["tag"] else recipe["image"]["repository"]
-    return [
-        f"<details><summary>Container and engine settings</summary><p>Image <code>{esc(image)}</code>"
-        + (f", pinned to <code>{esc(recipe['image']['digest'])}</code>" if recipe["image"]["digest"] else "")
-        + f"</p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody>{rows}</tbody></table></details>",
+def settings_table(recipe: dict) -> list[str]:
+    image = recipe["image"]
+    reference = f"{image['repository']}:{image['tag']}" if image["tag"] else image["repository"]
+    lines = [
+        f"Container `{reference}`" + (f", pinned to `{image['digest']}`." if image["digest"] else "."),
+        "",
+        "| Environment variable | Value |",
+        "|---|---|",
     ]
+    return lines + [f"| `{key}` | `{value}` |" for key, value in sorted(recipe["deployment"]["environment"].items())]
+
+
+def instance_label(recipe: dict) -> str:
+    instance = recipe["instance"]
+    if not instance["accelerator"]:
+        return instance["type"]
+    gpus = f"{instance['gpus']}x " if instance["gpus"] and instance["gpus"] > 1 else ""
+    return f"{gpus}{instance['accelerator']} ({instance['type']})"
+
+
+def instance_tabs(recipes: list[dict], body) -> list[str]:
+    lines = ['<hfoptions id="instance">']
+    for recipe in recipes:
+        lines += [f'<hfoption id="{instance_label(recipe)}">', "", *body(recipe), "", "</hfoption>"]
+    return [*lines, "</hfoptions>"]
 
 
 ENGINE_NAMES = {"vllm": "vLLM", "sglang": "SGLang", "llama.cpp": "llama.cpp", "vllm-omni": "vLLM-Omni"}
@@ -569,7 +524,22 @@ def model_page(model_id: str, recipes: list[dict], info: dict, model: dict) -> s
         if info["gated"]
         else ""
     )
-    labels = {recipe["id"]: recipe["instance"]["type"] for recipe in recipes}
+
+    def deploy(recipe: dict) -> list[str]:
+        price = recipe["instance"]["price_per_hour_usd"]
+        summary = [f"**{usd(price)} per hour**" if price is not None else None]
+        if recipe["context_length"]:
+            summary.append(f"{recipe['context_length']:,}-token context")
+        if recipe["engine"]["version"]:
+            name = recipe["engine"]["name"]
+            summary.append(f"{ENGINE_NAMES.get(name, name)} {recipe['engine']['version']}")
+        return [
+            ", ".join(part for part in summary if part),
+            "",
+            *(console_block(recipe) + [""] if recipe["template_url"] else []),
+            *cli_block(recipe, info["gated"]),
+        ]
+
     lines = [
         f"# Deploy {model_id} on Amazon SageMaker AI",
         "",
@@ -582,37 +552,23 @@ def model_page(model_id: str, recipes: list[dict], info: dict, model: dict) -> s
         "",
         "## Deploy",
         "",
-        "Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is "
-        "ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).",
+        "Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in "
+        f"`{DEFAULT_REGION}`; not every instance type is available in every region. The endpoint is ready after 10 to "
+        "30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).",
         "",
     ]
     if gated:
         lines += [gated, ""]
-    lines.append('<hfoptions id="instance">')
-    for recipe in recipes:
-        price = recipe["instance"]["price_per_hour_usd"]
-        summary = [f"**{usd(price)} per hour**" if price is not None else None, gpu_label(recipe)]
-        if recipe["context_length"]:
-            summary.append(f"{recipe['context_length']:,}-token context")
-        if recipe["engine"]["version"]:
-            name = recipe["engine"]["name"]
-            summary.append(f"{ENGINE_NAMES.get(name, name)} {recipe['engine']['version']}")
-        lines += [
-            f'<hfoption id="{labels[recipe["id"]]}">',
-            "",
-            " · ".join(part for part in summary if part),
-            "",
-            *(console_block(recipe) if recipe["template_url"] else []),
-            "",
-            *cli_block(recipe, info["gated"]),
-            "",
-            *performance_table(recipe),
-            *settings_block(recipe),
-            "",
-            "</hfoption>",
-        ]
     lines += [
-        "</hfoptions>",
+        *instance_tabs(recipes, deploy),
+        "",
+        "## Performance",
+        "",
+        *instance_tabs(recipes, performance_table),
+        "",
+        "## Engine settings",
+        "",
+        *instance_tabs(recipes, settings_table),
         "",
         "## Send requests",
         "",
@@ -688,12 +644,8 @@ def main() -> None:
     for path, content in pages.items():
         write_if_changed(path, content)
 
-    trending = sorted(models, key=lambda model_id: (-infos[model_id]["trending"], model_id.lower()))[:TRENDING_IN_MENU]
-    toc_entries = ["    - title: Trending models", "      isExpanded: true", "      sections:"]
-    for model_id in trending:
-        toc_entries += [f"        - local: recipes/{slug(model_id)}", f"          title: {json.dumps(model_id)}"]
     toctree = TOCTREE.read_text()
-    write_if_changed(TOCTREE, replace_between(toctree, TOC_START, TOC_END, toc_entries, TOCTREE))
+    write_if_changed(TOCTREE, replace_between(toctree, TOC_START, TOC_END, [], TOCTREE))
 
 
 if __name__ == "__main__":

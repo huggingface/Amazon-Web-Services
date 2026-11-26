@@ -8,27 +8,56 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g7e.12xlarge">
+<hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
 
-**$10.36 per hour** · 2 x NVIDIA RTX PRO 6000 · 418,992-token context · vLLM 0.32.0
+**$10.36 per hour**, 418,992-token context, vLLM 0.32.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nanbeige-nanbeige4-3-33b/g7e-12xlarge-vllm-tp2-3e8b67902b.json" data-stack="nanbeige4-3-33b-g7e-12xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnanbeige-nanbeige4-3-33b%2Fg7e-12xlarge-vllm-tp2-3e8b67902b.json&amp;stackName=nanbeige4-3-33b-g7e-12xlarge&amp;param_EndpointName=nanbeige4-3-33b-g7e-12xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnanbeige-nanbeige4-3-33b%2Fg7e-12xlarge-vllm-tp2-3e8b67902b.json&amp;stackName=nanbeige4-3-33b-g7e-12xlarge&amp;param_EndpointName=nanbeige4-3-33b-g7e-12xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nanbeige-nanbeige4-3-33b/g7e-12xlarge-vllm-tp2-3e8b67902b.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name nanbeige4-3-33b-g7e-12xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nanbeige-nanbeige4-3-33b/g7e-12xlarge-vllm-tp2-3e8b67902b.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=nanbeige4-3-33b-g7e-12xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nanbeige-nanbeige4-3-33b/g7e-12xlarge-vllm-tp2-3e8b67902b.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=nanbeige4-3-33b-g7e-12xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.8</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>418992</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>Nanbeige/Nanbeige4.3-33B</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>qwen3</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>Nanbeige/Nanbeige4.3-33B</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>2</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>qwen3_coder</code></td></tr></tbody></table></details>
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+</hfoptions>
+
+## Engine settings
+
+<hfoptions id="instance">
+<hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
+
+Container `huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.8` |
+| `SM_VLLM_MAX_MODEL_LEN` | `418992` |
+| `SM_VLLM_MODEL` | `Nanbeige/Nanbeige4.3-33B` |
+| `SM_VLLM_REASONING_PARSER` | `qwen3` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `Nanbeige/Nanbeige4.3-33B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `2` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
 
 </hfoption>
 </hfoptions>

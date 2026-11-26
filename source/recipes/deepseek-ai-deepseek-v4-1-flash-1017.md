@@ -8,87 +8,210 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g7e.24xlarge">
+<hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
 
-**$20.72 per hour** · 4 x NVIDIA RTX PRO 6000 · 1,048,576-token context · vLLM 0.32.0
+**$20.72 per hour**, 1,048,576-token context, vLLM 0.32.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-0eaa7f9619.json" data-stack="deepseek-v4-1-flash-1017-g7e-24xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fg7e-24xlarge-vllm-tp4-0eaa7f9619.json&amp;stackName=deepseek-v4-1-flash-1017-g7e-24xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-g7e-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fg7e-24xlarge-vllm-tp4-0eaa7f9619.json&amp;stackName=deepseek-v4-1-flash-1017-g7e-24xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-g7e-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-0eaa7f9619.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name deepseek-v4-1-flash-1017-g7e-24xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-0eaa7f9619.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-g7e-24xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-0eaa7f9619.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-g7e-24xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_BLOCK_SIZE</code></td><td><code>64</code></td></tr><tr><td><code>SM_VLLM_COMPILATION_CONFIG</code></td><td><code>&#123;&quot;max_cudagraph_capture_size&quot;:768,&quot;cudagraph_capture_sizes&quot;:[1,2,4,6,8,12,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,256,272,288,304,320,336,352,368,384,400,416,432,448,464,480,496,512,528,544,560,576,592,608,624,640,656,672,688,704,720,736,752,768]}</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_EXPERT_PARALLEL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.97</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>1048576</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_BATCHED_TOKENS</code></td><td><code>4096</code></td></tr><tr><td><code>SM_VLLM_MM_ENCODER_TP_MODE</code></td><td><code>data</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>1bae0e1088993b9b82de08f59de5be5a34e42170</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_SPECULATIVE_CONFIG</code></td><td><code>&#123;&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:5,&quot;revision&quot;:&quot;1bae0e1088993b9b82de08f59de5be5a34e42170&quot;,&quot;enable_adaptive_verification&quot;:true,&quot;use_local_argmax_reduction&quot;:true}</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>4</code></td></tr><tr><td><code>SM_VLLM_TOKENIZER_MODE</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>deepseek_v41</code></td></tr></tbody></table></details>
-
 </hfoption>
-<hfoption id="ml.g7e.48xlarge">
+<hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
 
-**$41.43 per hour** · 8 x NVIDIA RTX PRO 6000 · 1,048,576-token context · vLLM 0.32.0
+**$41.43 per hour**, 1,048,576-token context, vLLM 0.32.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-48xlarge-vllm-tp8-92c02f1246.json" data-stack="deepseek-v4-1-flash-1017-g7e-48xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fg7e-48xlarge-vllm-tp8-92c02f1246.json&amp;stackName=deepseek-v4-1-flash-1017-g7e-48xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-g7e-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fg7e-48xlarge-vllm-tp8-92c02f1246.json&amp;stackName=deepseek-v4-1-flash-1017-g7e-48xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-g7e-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-48xlarge-vllm-tp8-92c02f1246.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name deepseek-v4-1-flash-1017-g7e-48xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-48xlarge-vllm-tp8-92c02f1246.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-g7e-48xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-48xlarge-vllm-tp8-92c02f1246.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-g7e-48xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_BLOCK_SIZE</code></td><td><code>64</code></td></tr><tr><td><code>SM_VLLM_COMPILATION_CONFIG</code></td><td><code>&#123;&quot;max_cudagraph_capture_size&quot;:768,&quot;cudagraph_capture_sizes&quot;:[1,2,4,6,8,12,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,256,272,288,304,320,336,352,368,384,400,416,432,448,464,480,496,512,640,768]}</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_EXPERT_PARALLEL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.965</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>1048576</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_BATCHED_TOKENS</code></td><td><code>3840</code></td></tr><tr><td><code>SM_VLLM_MM_ENCODER_TP_MODE</code></td><td><code>data</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>1bae0e1088993b9b82de08f59de5be5a34e42170</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_SPECULATIVE_CONFIG</code></td><td><code>&#123;&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:5,&quot;revision&quot;:&quot;1bae0e1088993b9b82de08f59de5be5a34e42170&quot;,&quot;enable_adaptive_verification&quot;:true,&quot;use_local_argmax_reduction&quot;:true}</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>8</code></td></tr><tr><td><code>SM_VLLM_TOKENIZER_MODE</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>deepseek_v41</code></td></tr></tbody></table></details>
-
 </hfoption>
-<hfoption id="ml.p5.48xlarge">
+<hfoption id="8x NVIDIA H100 (ml.p5.48xlarge)">
 
-**$63.30 per hour** · 8 x NVIDIA H100 · 1,048,576-token context · vLLM 0.33.0
+**$63.30 per hour**, 1,048,576-token context, vLLM 0.33.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5-48xlarge-vllm-tp8-55aa59751b.json" data-stack="deepseek-v4-1-flash-1017-p5-48xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fp5-48xlarge-vllm-tp8-55aa59751b.json&amp;stackName=deepseek-v4-1-flash-1017-p5-48xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-p5-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fp5-48xlarge-vllm-tp8-55aa59751b.json&amp;stackName=deepseek-v4-1-flash-1017-p5-48xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-p5-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5-48xlarge-vllm-tp8-55aa59751b.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name deepseek-v4-1-flash-1017-p5-48xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5-48xlarge-vllm-tp8-55aa59751b.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-p5-48xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5-48xlarge-vllm-tp8-55aa59751b.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-p5-48xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.33.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>PYTORCH_CUDA_ALLOC_CONF</code></td><td><code>expandable_segments:True</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_EXPERT_PARALLEL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENGRAM_CONFIG</code></td><td><code>&#123;&quot;cpu_offload&quot;:true}</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.92</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>1048576</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_BATCHED_TOKENS</code></td><td><code>4096</code></td></tr><tr><td><code>SM_VLLM_MM_ENCODER_TP_MODE</code></td><td><code>data</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>1bae0e1088993b9b82de08f59de5be5a34e42170</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>8</code></td></tr><tr><td><code>SM_VLLM_TOKENIZER_MODE</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>VLLM_ENGINE_READY_TIMEOUT_S</code></td><td><code>3600</code></td></tr><tr><td><code>VLLM_USE_RUST_FRONTEND</code></td><td><code>0</code></td></tr><tr><td><code>VLLM_USE_V2_MODEL_RUNNER</code></td><td><code>1</code></td></tr></tbody></table></details>
-
 </hfoption>
-<hfoption id="ml.p5en.48xlarge">
+<hfoption id="8x NVIDIA H200 (ml.p5en.48xlarge)">
 
-**$72.80 per hour** · 8 x NVIDIA H200 · 1,048,576-token context · vLLM 0.33.0
+**$72.80 per hour**, 1,048,576-token context, vLLM 0.33.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5en-48xlarge-vllm-tp4-dp2-1fd7e83d09.json" data-stack="deepseek-v4-1-flash-1017-p5en-48xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fp5en-48xlarge-vllm-tp4-dp2-1fd7e83d09.json&amp;stackName=deepseek-v4-1-flash-1017-p5en-48xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-p5en-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fp5en-48xlarge-vllm-tp4-dp2-1fd7e83d09.json&amp;stackName=deepseek-v4-1-flash-1017-p5en-48xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-p5en-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5en-48xlarge-vllm-tp4-dp2-1fd7e83d09.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name deepseek-v4-1-flash-1017-p5en-48xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5en-48xlarge-vllm-tp4-dp2-1fd7e83d09.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-p5en-48xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/p5en-48xlarge-vllm-tp4-dp2-1fd7e83d09.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-p5en-48xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.33.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SAFETENSORS_FAST_GPU</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_DATA_PARALLEL_SIZE</code></td><td><code>2</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_EXPERT_PARALLEL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENGRAM_CONFIG</code></td><td><code>&#123;&quot;cpu_offload&quot;:true}</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>1048576</code></td></tr><tr><td><code>SM_VLLM_MM_ENCODER_TP_MODE</code></td><td><code>data</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>1bae0e1088993b9b82de08f59de5be5a34e42170</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>deepseek-ai/DeepSeek-V4.1-Flash-1017</code></td></tr><tr><td><code>SM_VLLM_SPECULATIVE_CONFIG</code></td><td><code>&#123;&quot;method&quot;:&quot;dspark&quot;,&quot;num_speculative_tokens&quot;:3,&quot;draft_sample_method&quot;:&quot;greedy&quot;}</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>4</code></td></tr><tr><td><code>SM_VLLM_TOKENIZER_MODE</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>deepseek_v41</code></td></tr><tr><td><code>VLLM_ENGINE_READY_TIMEOUT_S</code></td><td><code>3600</code></td></tr><tr><td><code>VLLM_USE_RUST_FRONTEND</code></td><td><code>0</code></td></tr></tbody></table></details>
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="8x NVIDIA H100 (ml.p5.48xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="8x NVIDIA H200 (ml.p5en.48xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+</hfoptions>
+
+## Engine settings
+
+<hfoptions id="instance">
+<hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
+
+Container `huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_BLOCK_SIZE` | `64` |
+| `SM_VLLM_COMPILATION_CONFIG` | `{"max_cudagraph_capture_size":768,"cudagraph_capture_sizes":[1,2,4,6,8,12,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,256,272,288,304,320,336,352,368,384,400,416,432,448,464,480,496,512,528,544,560,576,592,608,624,640,656,672,688,704,720,736,752,768]}` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.97` |
+| `SM_VLLM_MAX_MODEL_LEN` | `1048576` |
+| `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `4096` |
+| `SM_VLLM_MM_ENCODER_TP_MODE` | `data` |
+| `SM_VLLM_MODEL` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_REASONING_PARSER` | `deepseek_v41` |
+| `SM_VLLM_REVISION` | `1bae0e1088993b9b82de08f59de5be5a34e42170` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_SPECULATIVE_CONFIG` | `{"method":"dspark","num_speculative_tokens":5,"revision":"1bae0e1088993b9b82de08f59de5be5a34e42170","enable_adaptive_verification":true,"use_local_argmax_reduction":true}` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `4` |
+| `SM_VLLM_TOKENIZER_MODE` | `deepseek_v41` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `deepseek_v41` |
+
+</hfoption>
+<hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
+
+Container `huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_BLOCK_SIZE` | `64` |
+| `SM_VLLM_COMPILATION_CONFIG` | `{"max_cudagraph_capture_size":768,"cudagraph_capture_sizes":[1,2,4,6,8,12,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,256,272,288,304,320,336,352,368,384,400,416,432,448,464,480,496,512,640,768]}` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.965` |
+| `SM_VLLM_MAX_MODEL_LEN` | `1048576` |
+| `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `3840` |
+| `SM_VLLM_MM_ENCODER_TP_MODE` | `data` |
+| `SM_VLLM_MODEL` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_REASONING_PARSER` | `deepseek_v41` |
+| `SM_VLLM_REVISION` | `1bae0e1088993b9b82de08f59de5be5a34e42170` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_SPECULATIVE_CONFIG` | `{"method":"dspark","num_speculative_tokens":5,"revision":"1bae0e1088993b9b82de08f59de5be5a34e42170","enable_adaptive_verification":true,"use_local_argmax_reduction":true}` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `8` |
+| `SM_VLLM_TOKENIZER_MODE` | `deepseek_v41` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `deepseek_v41` |
+
+</hfoption>
+<hfoption id="8x NVIDIA H100 (ml.p5.48xlarge)">
+
+Container `huggingface-vllm:0.33.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+
+| Environment variable | Value |
+|---|---|
+| `PYTORCH_CUDA_ALLOC_CONF` | `expandable_segments:True` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_ENGRAM_CONFIG` | `{"cpu_offload":true}` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.92` |
+| `SM_VLLM_MAX_MODEL_LEN` | `1048576` |
+| `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `4096` |
+| `SM_VLLM_MM_ENCODER_TP_MODE` | `data` |
+| `SM_VLLM_MODEL` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_REASONING_PARSER` | `deepseek_v41` |
+| `SM_VLLM_REVISION` | `1bae0e1088993b9b82de08f59de5be5a34e42170` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `8` |
+| `SM_VLLM_TOKENIZER_MODE` | `deepseek_v41` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `deepseek_v41` |
+| `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
+| `VLLM_USE_RUST_FRONTEND` | `0` |
+| `VLLM_USE_V2_MODEL_RUNNER` | `1` |
+
+</hfoption>
+<hfoption id="8x NVIDIA H200 (ml.p5en.48xlarge)">
+
+Container `huggingface-vllm:0.33.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SAFETENSORS_FAST_GPU` | `1` |
+| `SM_VLLM_DATA_PARALLEL_SIZE` | `2` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_ENGRAM_CONFIG` | `{"cpu_offload":true}` |
+| `SM_VLLM_MAX_MODEL_LEN` | `1048576` |
+| `SM_VLLM_MM_ENCODER_TP_MODE` | `data` |
+| `SM_VLLM_MODEL` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_REASONING_PARSER` | `deepseek_v41` |
+| `SM_VLLM_REVISION` | `1bae0e1088993b9b82de08f59de5be5a34e42170` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
+| `SM_VLLM_SPECULATIVE_CONFIG` | `{"method":"dspark","num_speculative_tokens":3,"draft_sample_method":"greedy"}` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `4` |
+| `SM_VLLM_TOKENIZER_MODE` | `deepseek_v41` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `deepseek_v41` |
+| `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
+| `VLLM_USE_RUST_FRONTEND` | `0` |
 
 </hfoption>
 </hfoptions>

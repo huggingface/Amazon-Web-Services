@@ -8,27 +8,33 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g7e.4xlarge">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.4xlarge)">
 
-**$5.00 per hour** · 1 x NVIDIA RTX PRO 6000 · 40,960-token context · vLLM 0.34.0
+**$5.00 per hour**, 40,960-token context, vLLM 0.34.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-14b/g7e-2xlarge-vllm-tp1-2c62b8b5bc.json" data-stack="qwen3-14b-g7e-4xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fqwen-qwen3-14b%2Fg7e-2xlarge-vllm-tp1-2c62b8b5bc.json&amp;stackName=qwen3-14b-g7e-4xlarge&amp;param_EndpointName=qwen3-14b-g7e-4xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fqwen-qwen3-14b%2Fg7e-2xlarge-vllm-tp1-2c62b8b5bc.json&amp;stackName=qwen3-14b-g7e-4xlarge&amp;param_EndpointName=qwen3-14b-g7e-4xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-14b/g7e-2xlarge-vllm-tp1-2c62b8b5bc.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name qwen3-14b-g7e-4xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-14b/g7e-2xlarge-vllm-tp1-2c62b8b5bc.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=qwen3-14b-g7e-4xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-14b/g7e-2xlarge-vllm-tp1-2c62b8b5bc.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=qwen3-14b-g7e-4xlarge
 ```
 
-**Performance**
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.4xlarge)">
 
 | Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
 |---|---:|---:|---:|---:|---:|
@@ -39,7 +45,27 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen3-14b-g7e-4x
 | Shared prompt prefix | 32 | 33 | 0.70 s | 842 | $1.65 |
 | Real conversations | 256 | 15 | 0.27 s | 3,110 | $0.45 |
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm</code>, pinned to <code>sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>40960</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>Qwen/Qwen3-14B</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>qwen3</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>40c069824f4251a91eefaf281ebe4c544efd3e18</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>Qwen/Qwen3-14B</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>hermes</code></td></tr></tbody></table></details>
+</hfoption>
+</hfoptions>
+
+## Engine settings
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.4xlarge)">
+
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_MAX_MODEL_LEN` | `40960` |
+| `SM_VLLM_MODEL` | `Qwen/Qwen3-14B` |
+| `SM_VLLM_REASONING_PARSER` | `qwen3` |
+| `SM_VLLM_REVISION` | `40c069824f4251a91eefaf281ebe4c544efd3e18` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `Qwen/Qwen3-14B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `hermes` |
 
 </hfoption>
 </hfoptions>

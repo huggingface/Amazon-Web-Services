@@ -8,67 +8,154 @@
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
-<hfoption id="ml.g7e.2xlarge">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
-**$4.20 per hour** · 1 x NVIDIA RTX PRO 6000 · 65,536-token context · vLLM 0.26.0
+**$4.20 per hour**, 65,536-token context, vLLM 0.26.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-2xlarge-vllm-tp1-20aa958161.json" data-stack="nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16%2Fg7e-2xlarge-vllm-tp1-20aa958161.json&amp;stackName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge&amp;param_EndpointName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16%2Fg7e-2xlarge-vllm-tp1-20aa958161.json&amp;stackName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge&amp;param_EndpointName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-2xlarge-vllm-tp1-20aa958161.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-2xlarge-vllm-tp1-20aa958161.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-2xlarge-vllm-tp1-20aa958161.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-2xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_GPU_MEMORY_UTILIZATION</code></td><td><code>0.95</code></td></tr><tr><td><code>SM_VLLM_KV_CACHE_DTYPE</code></td><td><code>fp8</code></td></tr><tr><td><code>SM_VLLM_MAMBA_BACKEND</code></td><td><code>flashinfer</code></td></tr><tr><td><code>SM_VLLM_MAMBA_CACHE_MODE</code></td><td><code>align</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>65536</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_BATCHED_TOKENS</code></td><td><code>4096</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_SEQS</code></td><td><code>8</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16</code></td></tr><tr><td><code>SM_VLLM_MOE_BACKEND</code></td><td><code>flashinfer_cutlass</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>nemotron_v3</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>d468880b6ad3c6e0d21377ce7242adaea4cc884d</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>qwen3_coder</code></td></tr></tbody></table></details>
-
 </hfoption>
-<hfoption id="ml.g7e.12xlarge">
+<hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
 
-**$10.36 per hour** · 2 x NVIDIA RTX PRO 6000 · 65,536-token context · vLLM 0.26.0
+**$10.36 per hour**, 65,536-token context, vLLM 0.26.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-12xlarge-vllm-tp1-dp2-0b3869e4fc.json" data-stack="nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16%2Fg7e-12xlarge-vllm-tp1-dp2-0b3869e4fc.json&amp;stackName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge&amp;param_EndpointName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16%2Fg7e-12xlarge-vllm-tp1-dp2-0b3869e4fc.json&amp;stackName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge&amp;param_EndpointName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-12xlarge-vllm-tp1-dp2-0b3869e4fc.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-12xlarge-vllm-tp1-dp2-0b3869e4fc.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-12xlarge-vllm-tp1-dp2-0b3869e4fc.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-12xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_DATA_PARALLEL_SIZE</code></td><td><code>2</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_MAMBA_BACKEND</code></td><td><code>flashinfer</code></td></tr><tr><td><code>SM_VLLM_MAMBA_CACHE_MODE</code></td><td><code>align</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>65536</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_BATCHED_TOKENS</code></td><td><code>4096</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_SEQS</code></td><td><code>16</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16</code></td></tr><tr><td><code>SM_VLLM_MOE_BACKEND</code></td><td><code>flashinfer_cutlass</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>nemotron_v3</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>d468880b6ad3c6e0d21377ce7242adaea4cc884d</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>qwen3_coder</code></td></tr></tbody></table></details>
-
 </hfoption>
-<hfoption id="ml.g7e.24xlarge">
+<hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
 
-**$20.72 per hour** · 4 x NVIDIA RTX PRO 6000 · 65,536-token context · vLLM 0.26.0
+**$20.72 per hour**, 65,536-token context, vLLM 0.26.0
 
-<div class="not-prose my-4 flex flex-wrap items-center gap-2" {@attach (root) => { const select = root.querySelector("select"); const link = root.querySelector("a[data-template]"); const copy = root.querySelector("button[data-copy]"); const update = () => { link.href = ((region, template, stack) => "https://console.aws.amazon.com/cloudformation/home?region=" + region + "#/stacks/quickcreate?templateURL=" + encodeURIComponent(template) + "&stackName=" + stack + "&param_EndpointName=" + stack)(select.value, link.dataset.template, link.dataset.stack); }; select.addEventListener("change", update); copy.addEventListener("click", () => { navigator.clipboard.writeText(link.dataset.template).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); update(); }}>
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><select aria-label="AWS region" class="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm dark:border-gray-700 dark:bg-gray-950"><option value="us-east-1" selected>US East (N. Virginia) us-east-1</option><option value="us-east-2">US East (Ohio) us-east-2</option><option value="us-west-2">US West (Oregon) us-west-2</option><option value="ca-central-1">Canada (Central) ca-central-1</option><option value="eu-west-1">Europe (Ireland) eu-west-1</option><option value="eu-west-2">Europe (London) eu-west-2</option><option value="eu-central-1">Europe (Frankfurt) eu-central-1</option><option value="eu-north-1">Europe (Stockholm) eu-north-1</option><option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option><option value="ap-northeast-1">Asia Pacific (Tokyo) ap-northeast-1</option><option value="ap-northeast-2">Asia Pacific (Seoul) ap-northeast-2</option><option value="ap-southeast-1">Asia Pacific (Singapore) ap-southeast-1</option><option value="ap-southeast-2">Asia Pacific (Sydney) ap-southeast-2</option></select><a class="btn h-9 no-underline!" target="_blank" rel="noopener" data-template="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-24xlarge-vllm-tp1-dp4-db872c5cf2.json" data-stack="nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16%2Fg7e-24xlarge-vllm-tp1-dp4-db872c5cf2.json&amp;stackName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge&amp;param_EndpointName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16%2Fg7e-24xlarge-vllm-tp1-dp4-db872c5cf2.json&amp;stackName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge&amp;param_EndpointName=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-24xlarge-vllm-tp1-dp4-db872c5cf2.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge \
-  --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-24xlarge-vllm-tp1-dp4-db872c5cf2.json \
-  --capabilities CAPABILITY_IAM \
-  --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-5-lightning-30b-a3b-bf16/g7e-24xlarge-vllm-tp1-dp4-db872c5cf2.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-5-lightning-30b-a3b-bf16-g7e-24xlarge
 ```
 
-<details><summary>Container and engine settings</summary><p>Image <code>huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.04</code></p><table><thead><tr><th>Environment variable</th><th>Value</th></tr></thead><tbody><tr><td><code>SM_VLLM_DATA_PARALLEL_SIZE</code></td><td><code>4</code></td></tr><tr><td><code>SM_VLLM_ENABLE_AUTO_TOOL_CHOICE</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_ENABLE_EXPERT_PARALLEL</code></td><td><code>true</code></td></tr><tr><td><code>SM_VLLM_MAMBA_BACKEND</code></td><td><code>flashinfer</code></td></tr><tr><td><code>SM_VLLM_MAMBA_CACHE_MODE</code></td><td><code>align</code></td></tr><tr><td><code>SM_VLLM_MAX_MODEL_LEN</code></td><td><code>65536</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_BATCHED_TOKENS</code></td><td><code>4096</code></td></tr><tr><td><code>SM_VLLM_MAX_NUM_SEQS</code></td><td><code>16</code></td></tr><tr><td><code>SM_VLLM_MODEL</code></td><td><code>nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16</code></td></tr><tr><td><code>SM_VLLM_MOE_BACKEND</code></td><td><code>flashinfer_cutlass</code></td></tr><tr><td><code>SM_VLLM_REASONING_PARSER</code></td><td><code>nemotron_v3</code></td></tr><tr><td><code>SM_VLLM_REVISION</code></td><td><code>d468880b6ad3c6e0d21377ce7242adaea4cc884d</code></td></tr><tr><td><code>SM_VLLM_SERVED_MODEL_NAME</code></td><td><code>nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16</code></td></tr><tr><td><code>SM_VLLM_TENSOR_PARALLEL_SIZE</code></td><td><code>1</code></td></tr><tr><td><code>SM_VLLM_TOOL_CALL_PARSER</code></td><td><code>qwen3_coder</code></td></tr></tbody></table></details>
+</hfoption>
+</hfoptions>
+
+## Performance
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
+
+No benchmark results for this instance yet.
+
+</hfoption>
+</hfoptions>
+
+## Engine settings
+
+<hfoptions id="instance">
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+
+Container `huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.95` |
+| `SM_VLLM_KV_CACHE_DTYPE` | `fp8` |
+| `SM_VLLM_MAMBA_BACKEND` | `flashinfer` |
+| `SM_VLLM_MAMBA_CACHE_MODE` | `align` |
+| `SM_VLLM_MAX_MODEL_LEN` | `65536` |
+| `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `4096` |
+| `SM_VLLM_MAX_NUM_SEQS` | `8` |
+| `SM_VLLM_MODEL` | `nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16` |
+| `SM_VLLM_MOE_BACKEND` | `flashinfer_cutlass` |
+| `SM_VLLM_REASONING_PARSER` | `nemotron_v3` |
+| `SM_VLLM_REVISION` | `d468880b6ad3c6e0d21377ce7242adaea4cc884d` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
+
+</hfoption>
+<hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
+
+Container `huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_DATA_PARALLEL_SIZE` | `2` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_MAMBA_BACKEND` | `flashinfer` |
+| `SM_VLLM_MAMBA_CACHE_MODE` | `align` |
+| `SM_VLLM_MAX_MODEL_LEN` | `65536` |
+| `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `4096` |
+| `SM_VLLM_MAX_NUM_SEQS` | `16` |
+| `SM_VLLM_MODEL` | `nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16` |
+| `SM_VLLM_MOE_BACKEND` | `flashinfer_cutlass` |
+| `SM_VLLM_REASONING_PARSER` | `nemotron_v3` |
+| `SM_VLLM_REVISION` | `d468880b6ad3c6e0d21377ce7242adaea4cc884d` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
+
+</hfoption>
+<hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
+
+Container `huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.04`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_DATA_PARALLEL_SIZE` | `4` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
+| `SM_VLLM_MAMBA_BACKEND` | `flashinfer` |
+| `SM_VLLM_MAMBA_CACHE_MODE` | `align` |
+| `SM_VLLM_MAX_MODEL_LEN` | `65536` |
+| `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `4096` |
+| `SM_VLLM_MAX_NUM_SEQS` | `16` |
+| `SM_VLLM_MODEL` | `nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16` |
+| `SM_VLLM_MOE_BACKEND` | `flashinfer_cutlass` |
+| `SM_VLLM_REASONING_PARSER` | `nemotron_v3` |
+| `SM_VLLM_REVISION` | `d468880b6ad3c6e0d21377ce7242adaea4cc884d` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
 
 </hfoption>
 </hfoptions>
