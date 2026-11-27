@@ -1,0 +1,63 @@
+name: Update Recipes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *" # Every day at 5am UTC
+
+concurrency:
+  group: update-recipes
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d  # v10.4.0
+
+      - name: Download CloudFormation templates from the recipes dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN_SAGEMAKER_RECIPES }}
+        run: uvx --from huggingface_hub hf download hf-rev/sagemaker-recipes --repo-type dataset --include "templates/**" --local-dir "$RUNNER_TEMP/recipes"
+
+      - uses: aws-actions/configure-aws-credentials@45666896f5d8e0f10ae255413f3a4cdd03bdc8f5  # v6.3.1
+        with:
+          role-to-assume: ${{ vars.RECIPES_AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Publish CloudFormation templates to S3
+        run: aws s3 sync "$RUNNER_TEMP/recipes/templates" s3://hf-sagemaker-recipes/templates --content-type application/json
+
+      - name: Regenerate the recipes pages
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN_SAGEMAKER_RECIPES }}
+        run: python3 scripts/generate-recipes.py --fetch
+
+      - name: Generate a GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc  # v3.4.0
+        with:
+          app-id: ${{ secrets.PR_BOT_AWS_APP_ID }}
+          private-key: ${{ secrets.PR_BOT_AWS_PEM }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Open or update the pull request
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1  # v8.1.3
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "update: recipes from the recipes dataset"
+          branch: bot/update-recipes
+          delete-branch: true
+          title: "[Bot] Update recipes"
+          body: |
+            Regenerated from the [`hf-rev/sagemaker-recipes`](https://huggingface.co/datasets/hf-rev/sagemaker-recipes) dataset that Kitchen keeps up to date. The CloudFormation templates of these recipes are already published to `s3://hf-sagemaker-recipes/templates`.
+
+            Created by the [Update Recipes workflow](https://github.com/huggingface/Amazon-Web-Services/blob/main/.github/workflows/update_recipes.yml). Review the preview, then approve and merge.
+
