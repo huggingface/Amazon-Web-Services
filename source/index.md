@@ -29,8 +29,8 @@ Choose from the following options to quickly get started:
     <span class="text-sm font-semibold text-gray-800 group-hover:text-purple-500 dark:text-gray-200 dark:group-hover:text-purple-300">Start from Python →</span>
   </a>
   <a class="group flex flex-col rounded-xl border border-green-100 bg-linear-to-br from-green-50 px-6 py-5 no-underline! dark:border-gray-850 dark:from-green-500/10" href="./recipes/index">
-    <div class="mb-2 text-lg font-semibold text-green-600 dark:text-green-300">Deploy a tested recipe</div>
-    <p class="mb-4 grow text-sm text-gray-600 dark:text-gray-400">Serve a Hub model with settings and results measured on SageMaker AI.</p>
+    <div class="mb-2 text-lg font-semibold text-green-600 dark:text-green-300">Deploy a recipe</div>
+    <p class="mb-4 grow text-sm text-gray-600 dark:text-gray-400">Browse deployment configurations and benchmark results for Hub models on SageMaker AI.</p>
     <span class="text-sm font-semibold text-gray-800 group-hover:text-green-600 dark:text-gray-200 dark:group-hover:text-green-300">Browse recipes →</span>
   </a>
 </div>
