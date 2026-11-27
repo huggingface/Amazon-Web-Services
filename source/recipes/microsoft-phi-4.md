@@ -4,16 +4,17 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt="Microsoft logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">A 14B dense decoder-only model for instruction following, math, coding, and advanced reasoning with 16K context.</span><span class="flex flex-wrap gap-1.5 text-xs"></span></div></div>
 
-[microsoft/phi-4](https://huggingface.co/microsoft/phi-4) by [Microsoft](https://huggingface.co/microsoft): 15B parameters, 16,384-token context, license `mit`.
+[microsoft/phi-4](https://huggingface.co/microsoft/phi-4) by [Microsoft](https://huggingface.co/microsoft): 15B parameters, 16,384-token context, license [mit](https://huggingface.co/microsoft/phi-4).
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Deploy from the AWS CloudFormation console or with the AWS CLI command. Both create the endpoint in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
-<hfoptions id="instance">
-<hfoption id="NVIDIA L40S (ml.g6e.xlarge)">
+**NVIDIA L40S (ml.g6e.xlarge)**, $2.61 per hour, 16,384-token context
 
-**$2.61 per hour**, 16,384-token context, vLLM 0.34.0
+Validated on 26 Nov 2026 in us-east-2 with vLLM 0.34.0. Prices are us-east-1 on-demand.
+
+New AWS accounts often have no quota for this instance: request `ml.g6e.xlarge for endpoint usage` in [Service Quotas](https://us-east-1.console.aws.amazon.com/servicequotas/home/services/sagemaker/quotas) before deploying.
 
 <div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
@@ -28,28 +29,16 @@ aws cloudformation create-stack --region us-east-1 --stack-name phi-4-g6e-xlarge
     --parameters ParameterKey=EndpointName,ParameterValue=phi-4-g6e-xlarge
 ```
 
-</hfoption>
-</hfoptions>
-
 ## Performance
 
-<hfoptions id="instance">
-<hfoption id="NVIDIA L40S (ml.g6e.xlarge)">
-
-| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
 |---|---:|---:|---:|---:|---:|
 | One user | 1 | 25 | 0.20 s | 25 | $28.74 |
 | 64 users | 64 | 14 | 18.64 s | 438 | $1.65 |
 | Shared prompt prefix | 32 | 14 | 0.28 s | 388 | $1.87 |
 | Real conversations | 256 | 20 | 68.08 s | 607 | $1.19 |
 
-</hfoption>
-</hfoptions>
-
 ## Engine settings
-
-<hfoptions id="instance">
-<hfoption id="NVIDIA L40S (ml.g6e.xlarge)">
 
 Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
@@ -64,9 +53,6 @@ Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e
 | `SM_VLLM_SERVED_MODEL_NAME` | `microsoft/phi-4` |
 | `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
 | `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
-
-</hfoption>
-</hfoptions>
 
 ## Send requests
 
@@ -90,7 +76,7 @@ print(response.choices[0].message.content)
 
 ## Clean up
 
-Endpoints are billed per hour while they run. Delete the stack when you are done, from the CloudFormation console or with:
+Endpoints are billed per hour while they run. Delete the stack when you are done, from the CloudFormation console or with the command below. If you changed the stack name when deploying, use that name instead:
 
 ```bash
 aws cloudformation delete-stack --region us-east-1 --stack-name phi-4-g6e-xlarge
