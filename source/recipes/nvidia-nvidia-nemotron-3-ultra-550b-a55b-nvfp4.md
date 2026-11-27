@@ -11,6 +11,24 @@
 Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
+<hfoption id="8x NVIDIA A100 (ml.p4de.24xlarge)">
+
+**$31.56 per hour**, 32,768-token context, vLLM 0.34.0
+
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
+
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fnvidia-nvidia-nemotron-3-ultra-550b-a55b-nvfp4%2Fp4de-24xlarge-vllm-tp8-9337d7c8c3.json&amp;stackName=nvidia-nemotron-3-ultra-550b-a55b-nvfp4-p4de-24xlarge&amp;param_EndpointName=nvidia-nemotron-3-ultra-550b-a55b-nvfp4-p4de-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-ultra-550b-a55b-nvfp4/p4de-24xlarge-vllm-tp8-9337d7c8c3.json" class="btn h-9">Copy template URL</button></div>
+
+</div>
+
+```bash
+aws cloudformation create-stack --region us-east-1 --stack-name nvidia-nemotron-3-ultra-550b-a55b-nvfp4-p4de-24xlarge \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/nvidia-nvidia-nemotron-3-ultra-550b-a55b-nvfp4/p4de-24xlarge-vllm-tp8-9337d7c8c3.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=nvidia-nemotron-3-ultra-550b-a55b-nvfp4-p4de-24xlarge
+```
+
+</hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
 
 **$41.43 per hour**, 262,144-token context, vLLM 0.34.0
@@ -70,6 +88,18 @@ aws cloudformation create-stack --region us-east-1 --stack-name nvidia-nemotron-
 ## Performance
 
 <hfoptions id="instance">
+<hfoption id="8x NVIDIA A100 (ml.p4de.24xlarge)">
+
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 52 | 0.29 s | 52 | $169.24 |
+| Long answers | 4 | 45 | 0.78 s | 180 | $48.59 |
+| Long prompts | 4 | 11 | 6.59 s | 29 | $302.35 |
+| 64 users | 64 | 16 | 16.61 s | 499 | $17.57 |
+| Shared prompt prefix | 32 | 7 | 1.98 s | 200 | $43.87 |
+| Real conversations | 256 | 20 | 73.00 s | 617 | $14.20 |
+
+</hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
 
 No benchmark results for this instance yet.
@@ -90,6 +120,36 @@ No benchmark results for this instance yet.
 ## Engine settings
 
 <hfoptions id="instance">
+<hfoption id="8x NVIDIA A100 (ml.p4de.24xlarge)">
+
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
+
+| Environment variable | Value |
+|---|---|
+| `NCCL_IB_DISABLE` | `1` |
+| `SAFETENSORS_FAST_GPU` | `1` |
+| `SM_VLLM_COMPILATION_CONFIG` | `{"pass_config":{"fuse_allreduce_rms":false}}` |
+| `SM_VLLM_DISABLE_CUSTOM_ALL_REDUCE` | `true` |
+| `SM_VLLM_DISTRIBUTED_TIMEOUT_SECONDS` | `3600` |
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
+| `SM_VLLM_ENABLE_MAMBA_CACHE_STOCHASTIC_ROUNDING` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.95` |
+| `SM_VLLM_MAMBA_BACKEND` | `flashinfer` |
+| `SM_VLLM_MAMBA_CACHE_DTYPE` | `float16` |
+| `SM_VLLM_MAMBA_CACHE_PHILOX_ROUNDS` | `5` |
+| `SM_VLLM_MAMBA_SSM_CACHE_DTYPE` | `float16` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
+| `SM_VLLM_MODEL` | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` |
+| `SM_VLLM_MODEL_LOADER_EXTRA_CONFIG` | `{"enable_multithread_load":true,"num_threads":96}` |
+| `SM_VLLM_REASONING_PARSER` | `nemotron_v3` |
+| `SM_VLLM_REVISION` | `183968f87ae4cedce3039313cac1fd43d112c578` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `8` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
+
+</hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
 
 Container `huggingface-vllm:0.34.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
@@ -184,7 +244,7 @@ The endpoint serves the OpenAI chat completions API. Any OpenAI client works wit
 from openai import OpenAI
 from sagemaker.core.token_generator import generate_token
 
-region, endpoint = "us-east-1", "nvidia-nemotron-3-ultra-550b-a55b-nvfp4-g7e-48xlarge"
+region, endpoint = "us-east-1", "nvidia-nemotron-3-ultra-550b-a55b-nvfp4-p4de-24xlarge"
 client = OpenAI(
     base_url=f"https://runtime.sagemaker.{region}.amazonaws.com/endpoints/{endpoint}/openai/v1",
     api_key=generate_token(region=region),
@@ -201,5 +261,5 @@ print(response.choices[0].message.content)
 Endpoints are billed per hour while they run. Delete the stack when you are done, from the CloudFormation console or with:
 
 ```bash
-aws cloudformation delete-stack --region us-east-1 --stack-name nvidia-nemotron-3-ultra-550b-a55b-nvfp4-g7e-48xlarge
+aws cloudformation delete-stack --region us-east-1 --stack-name nvidia-nemotron-3-ultra-550b-a55b-nvfp4-p4de-24xlarge
 ```

@@ -29,6 +29,24 @@ aws cloudformation create-stack --region us-east-1 --stack-name lfm2-5-2-6b-g5-x
 ```
 
 </hfoption>
+<hfoption id="NVIDIA L4 (ml.g6.4xlarge)">
+
+**$1.65 per hour**, 32,768-token context, vLLM 0.34.0
+
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
+
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fliquidai-lfm2-5-2-6b%2Fg6-2xlarge-vllm-tp1-6c4a4a714a.json&amp;stackName=lfm2-5-2-6b-g6-4xlarge&amp;param_EndpointName=lfm2-5-2-6b-g6-4xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/liquidai-lfm2-5-2-6b/g6-2xlarge-vllm-tp1-6c4a4a714a.json" class="btn h-9">Copy template URL</button></div>
+
+</div>
+
+```bash
+aws cloudformation create-stack --region us-east-1 --stack-name lfm2-5-2-6b-g6-4xlarge \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/liquidai-lfm2-5-2-6b/g6-2xlarge-vllm-tp1-6c4a4a714a.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=lfm2-5-2-6b-g6-4xlarge
+```
+
+</hfoption>
 </hfoptions>
 
 ## Performance
@@ -37,6 +55,18 @@ aws cloudformation create-stack --region us-east-1 --stack-name lfm2-5-2-6b-g5-x
 <hfoption id="NVIDIA A10G (ml.g5.xlarge)">
 
 No benchmark results for this instance yet.
+
+</hfoption>
+<hfoption id="NVIDIA L4 (ml.g6.4xlarge)">
+
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 45 | 0.20 s | 45 | $10.28 |
+| Long answers | 4 | 42 | 0.51 s | 169 | $2.72 |
+| Long prompts | 4 | 21 | 4.77 s | 47 | $9.83 |
+| 64 users | 64 | 25 | 10.55 s | 777 | $0.59 |
+| Shared prompt prefix | 32 | 29 | 0.52 s | 703 | $0.65 |
+| Real conversations | 256 | 35 | 42.18 s | 1,043 | $0.44 |
 
 </hfoption>
 </hfoptions>
@@ -56,6 +86,24 @@ Container `huggingface-vllm:0.26.0-transformers5.10.2-gpu-py312-cu130-ubuntu22.0
 | `SM_VLLM_REASONING_PARSER` | `qwen3` |
 | `SM_VLLM_REVISION` | `a4e00e83c0979ee9deb88d04b6360599fa956656` |
 | `SM_VLLM_SERVED_MODEL_NAME` | `LiquidAI/LFM2.5-2.6B` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `lfm2` |
+
+</hfoption>
+<hfoption id="NVIDIA L4 (ml.g6.4xlarge)">
+
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.9` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
+| `SM_VLLM_MODEL` | `LiquidAI/LFM2.5-2.6B` |
+| `SM_VLLM_REASONING_PARSER` | `qwen3` |
+| `SM_VLLM_REVISION` | `dca1825886789bd40b94368f53b1d9ada4c94598` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `LiquidAI/LFM2.5-2.6B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
 | `SM_VLLM_TOOL_CALL_PARSER` | `lfm2` |
 
 </hfoption>

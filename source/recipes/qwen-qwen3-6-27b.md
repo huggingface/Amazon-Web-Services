@@ -11,6 +11,24 @@
 Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
 <hfoptions id="instance">
+<hfoption id="4x NVIDIA A10G (ml.g5.12xlarge)">
+
+**$7.09 per hour**, 32,768-token context, vLLM 0.34.0
+
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
+
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fqwen-qwen3-6-27b%2Fg5-12xlarge-vllm-tp4-cb7eedc62d.json&amp;stackName=qwen3-6-27b-g5-12xlarge&amp;param_EndpointName=qwen3-6-27b-g5-12xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-6-27b/g5-12xlarge-vllm-tp4-cb7eedc62d.json" class="btn h-9">Copy template URL</button></div>
+
+</div>
+
+```bash
+aws cloudformation create-stack --region us-east-1 --stack-name qwen3-6-27b-g5-12xlarge \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-6-27b/g5-12xlarge-vllm-tp4-cb7eedc62d.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=qwen3-6-27b-g5-12xlarge
+```
+
+</hfoption>
 <hfoption id="4x NVIDIA L40S (ml.g6e.12xlarge)">
 
 **$13.12 per hour**, 262,144-token context, vLLM 0.21.0
@@ -34,6 +52,18 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen3-6-27b-g6e-
 ## Performance
 
 <hfoptions id="instance">
+<hfoption id="4x NVIDIA A10G (ml.g5.12xlarge)">
+
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 29 | 0.83 s | 29 | $67.69 |
+| Long answers | 4 | 26 | 2.86 s | 103 | $19.20 |
+| Long prompts | 4 | 4 | 19.01 s | 10 | $201.12 |
+| 64 users | 64 | 7 | 41.61 s | 202 | $9.77 |
+| Shared prompt prefix | 32 | 5 | 3.93 s | 125 | $15.72 |
+| Real conversations | 256 | 11 | 133.59 s | 341 | $5.78 |
+
+</hfoption>
 <hfoption id="4x NVIDIA L40S (ml.g6e.12xlarge)">
 
 No benchmark results for this instance yet.
@@ -44,6 +74,26 @@ No benchmark results for this instance yet.
 ## Engine settings
 
 <hfoptions id="instance">
+<hfoption id="4x NVIDIA A10G (ml.g5.12xlarge)">
+
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.9` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
+| `SM_VLLM_MM_ENCODER_TP_MODE` | `data` |
+| `SM_VLLM_MODEL` | `Qwen/Qwen3.6-27B` |
+| `SM_VLLM_REASONING_PARSER` | `qwen3` |
+| `SM_VLLM_REVISION` | `6a9e13bd6fc8f0983b9b99948120bc37f49c13e9` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `Qwen/Qwen3.6-27B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `4` |
+| `SM_VLLM_TOKENIZER_REVISION` | `6a9e13bd6fc8f0983b9b99948120bc37f49c13e9` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
+
+</hfoption>
 <hfoption id="4x NVIDIA L40S (ml.g6e.12xlarge)">
 
 Container `huggingface-vllm:0.21.0-transformers5.8.1-gpu-py312-cu130-ubuntu22.04`.
@@ -69,7 +119,7 @@ The endpoint serves the OpenAI chat completions API. Any OpenAI client works wit
 from openai import OpenAI
 from sagemaker.core.token_generator import generate_token
 
-region, endpoint = "us-east-1", "qwen3-6-27b-g6e-12xlarge"
+region, endpoint = "us-east-1", "qwen3-6-27b-g5-12xlarge"
 client = OpenAI(
     base_url=f"https://runtime.sagemaker.{region}.amazonaws.com/endpoints/{endpoint}/openai/v1",
     api_key=generate_token(region=region),
@@ -86,5 +136,5 @@ print(response.choices[0].message.content)
 Endpoints are billed per hour while they run. Delete the stack when you are done, from the CloudFormation console or with:
 
 ```bash
-aws cloudformation delete-stack --region us-east-1 --stack-name qwen3-6-27b-g6e-12xlarge
+aws cloudformation delete-stack --region us-east-1 --stack-name qwen3-6-27b-g5-12xlarge
 ```

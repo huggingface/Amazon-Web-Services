@@ -29,6 +29,24 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen3-8-27b-g7e-
 ```
 
 </hfoption>
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.8xlarge)">
+
+**$6.59 per hour**, 32,768-token context, vLLM 0.34.0
+
+<div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
+
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fqwen-qwen3-8-27b%2Fg7e-2xlarge-vllm-tp1-10e3cb5051.json&amp;stackName=qwen3-8-27b-g7e-8xlarge&amp;param_EndpointName=qwen3-8-27b-g7e-8xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-8-27b/g7e-2xlarge-vllm-tp1-10e3cb5051.json" class="btn h-9">Copy template URL</button></div>
+
+</div>
+
+```bash
+aws cloudformation create-stack --region us-east-1 --stack-name qwen3-8-27b-g7e-8xlarge \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/qwen-qwen3-8-27b/g7e-2xlarge-vllm-tp1-10e3cb5051.json \
+    --capabilities CAPABILITY_IAM \
+    --parameters ParameterKey=EndpointName,ParameterValue=qwen3-8-27b-g7e-8xlarge
+```
+
+</hfoption>
 <hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
 
 **$10.36 per hour**, 262,144-token context, vLLM 0.27.1
@@ -129,6 +147,18 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen3-8-27b-g7-4
 No benchmark results for this instance yet.
 
 </hfoption>
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.8xlarge)">
+
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 26 | 0.20 s | 26 | $69.24 |
+| Long answers | 4 | 26 | 0.56 s | 102 | $17.90 |
+| Long prompts | 4 | 16 | 6.65 s | 35 | $52.43 |
+| 64 users | 64 | 16 | 16.67 s | 489 | $3.74 |
+| Shared prompt prefix | 32 | 15 | 1.74 s | 366 | $5.00 |
+| Real conversations | 256 | 20 | 74.42 s | 595 | $3.07 |
+
+</hfoption>
 <hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
 
 No benchmark results for this instance yet.
@@ -174,6 +204,27 @@ Container `vllm`, pinned to `sha256:3e580b07297e63b25ca6792c4ce54227ae60ddbfdb95
 | `SM_VLLM_SERVED_MODEL_NAME` | `Qwen/Qwen3.8-27B` |
 | `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
 | `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
+
+</hfoption>
+<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.8xlarge)">
+
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
+
+| Environment variable | Value |
+|---|---|
+| `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.9` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
+| `SM_VLLM_MODEL` | `Qwen/Qwen3.8-27B` |
+| `SM_VLLM_REASONING_PARSER` | `qwen3` |
+| `SM_VLLM_REVISION` | `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0` |
+| `SM_VLLM_SERVED_MODEL_NAME` | `Qwen/Qwen3.8-27B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
+| `SM_VLLM_TOKENIZER_REVISION` | `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0` |
+| `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_coder` |
+| `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
 
 </hfoption>
 <hfoption id="2x NVIDIA RTX PRO 6000 (ml.g7e.12xlarge)">
