@@ -13,6 +13,17 @@
   title: Get started
   isExpanded: true
 - sections:
+    - local: recipes/index
+      title: Overview
+    - local: recipes/deploy-a-recipe
+      title: Deploy a model
+    - local: recipes/methodology
+      title: How deployments are benchmarked
+# GENERATED RECIPES DO NOT EDIT!
+# END GENERATED RECIPES
+  title: Recipes
+  isExpanded: true
+- sections:
     - local: agents/agent-harnesses
       title: Connect agent harnesses
     - local: agents/sagemaker-skills
