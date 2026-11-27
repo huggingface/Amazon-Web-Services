@@ -13,17 +13,17 @@ Pick an instance, then deploy in one click from the AWS console or run the AWS C
 <hfoptions id="instance">
 <hfoption id="NVIDIA L40S (ml.g6e.xlarge)">
 
-**$2.61 per hour**, 262,144-token context, vLLM 0.25.0
+**$2.61 per hour**, 32,768-token context, vLLM 0.34.0
 
 <div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepreinforce-ai-ornith-1-0-9b%2Fg6e-2xlarge-vllm-5e5ab5f719.json&amp;stackName=ornith-1-0-9b-g6e-xlarge&amp;param_EndpointName=ornith-1-0-9b-g6e-xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepreinforce-ai-ornith-1-0-9b/g6e-2xlarge-vllm-5e5ab5f719.json" class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepreinforce-ai-ornith-1-0-9b%2Fg6e-2xlarge-vllm-tp1-cefb09ef01.json&amp;stackName=ornith-1-0-9b-g6e-xlarge&amp;param_EndpointName=ornith-1-0-9b-g6e-xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepreinforce-ai-ornith-1-0-9b/g6e-2xlarge-vllm-tp1-cefb09ef01.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name ornith-1-0-9b-g6e-xlarge \
-    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepreinforce-ai-ornith-1-0-9b/g6e-2xlarge-vllm-5e5ab5f719.json \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepreinforce-ai-ornith-1-0-9b/g6e-2xlarge-vllm-tp1-cefb09ef01.json \
     --capabilities CAPABILITY_IAM \
     --parameters ParameterKey=EndpointName,ParameterValue=ornith-1-0-9b-g6e-xlarge
 ```
@@ -36,7 +36,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name ornith-1-0-9b-g6
 <hfoptions id="instance">
 <hfoption id="NVIDIA L40S (ml.g6e.xlarge)">
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 44 | 0.14 s | 44 | $16.48 |
+| Long answers | 4 | 40 | 0.33 s | 160 | $4.52 |
+| Long prompts | 4 | 21 | 2.56 s | 58 | $12.38 |
+| 64 users | 64 | 26 | 10.34 s | 784 | $0.92 |
+| Shared prompt prefix | 32 | 23 | 0.40 s | 618 | $1.17 |
+| Real conversations | 256 | 30 | 48.24 s | 926 | $0.78 |
 
 </hfoption>
 </hfoptions>
@@ -46,17 +53,20 @@ No benchmark results for this instance yet.
 <hfoptions id="instance">
 <hfoption id="NVIDIA L40S (ml.g6e.xlarge)">
 
-Container `huggingface-vllm:0.25-transformers5.10-gpu-py312-cu130-ubuntu22.04`.
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
 | Environment variable | Value |
 |---|---|
 | `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
 | `SM_VLLM_ENABLE_PREFIX_CACHING` | `true` |
 | `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.9` |
-| `SM_VLLM_MAX_MODEL_LEN` | `262144` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
 | `SM_VLLM_MODEL` | `deepreinforce-ai/Ornith-1.0-9B` |
 | `SM_VLLM_REASONING_PARSER` | `qwen3` |
+| `SM_VLLM_REVISION` | `83dc1f5e24ef8527af019a6b3bf66ac0f1c2c999` |
 | `SM_VLLM_SERVED_MODEL_NAME` | `deepreinforce-ai/Ornith-1.0-9B` |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
 | `SM_VLLM_TOOL_CALL_PARSER` | `qwen3_xml` |
 
 </hfoption>
