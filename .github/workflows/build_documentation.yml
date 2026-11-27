@@ -15,7 +15,21 @@ jobs:
       package_name: sagemaker
       path_to_docs: Amazon-Web-Services/source
       additional_args: --not_python_module
-      pre_command: cd Amazon-Web-Services && make docs
+      pre_command: cd Amazon-Web-Services && make docs && python scripts/hide-recipes.py
     secrets:
       token: ${{ secrets.HUGGINGFACE_PUSH }}
       hf_token: ${{ secrets.HF_DOC_BUILD_PUSH }}
+
+  unpublish-recipes:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d  # v10.4.0
+      - name: Remove previously published recipe pages
+        env:
+          HF_TOKEN: ${{ secrets.HF_DOC_BUILD_PUSH }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/empty-recipes"
+          uvx --from huggingface_hub hf sync "$RUNNER_TEMP/empty-recipes" hf://buckets/hf-doc-build/doc/sagemaker/main/en/recipes --delete
