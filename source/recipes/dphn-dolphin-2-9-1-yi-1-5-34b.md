@@ -33,7 +33,12 @@ aws cloudformation create-stack --region us-east-1 --stack-name dolphin-2-9-1-yi
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 36 | 0.72 s | 36 | $146.84 |
+| 64 users | 64 | 8 | 35.99 s | 232 | $22.53 |
+| Shared prompt prefix | 32 | 9 | 0.54 s | 210 | $24.86 |
+| Real conversations | 256 | 14 | 100.02 s | 401 | $13.04 |
 
 ## Engine settings
 

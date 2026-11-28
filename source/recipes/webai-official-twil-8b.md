@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name twil-8b-g6e-xlar
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 41 | 0.13 s | 41 | $17.62 |
+| Long answers | 4 | 36 | 0.26 s | 146 | $4.97 |
+| Long prompts | 4 | 14 | 3.30 s | 41 | $17.49 |
+| 64 users | 64 | 23 | 11.60 s | 703 | $1.03 |
+| Shared prompt prefix | 32 | 24 | 0.46 s | 675 | $1.07 |
+| Real conversations | 256 | 32 | 46.69 s | 973 | $0.74 |
 
 ## Engine settings
 

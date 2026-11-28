@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name glm-4-5-fp8-p4de
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 42 | 0.21 s | 42 | $208.45 |
+| Long answers | 4 | 35 | 0.40 s | 139 | $63.06 |
+| Long prompts | 4 | 13 | 4.25 s | 36 | $244.23 |
+| 64 users | 64 | 18 | 14.93 s | 548 | $16.00 |
+| Shared prompt prefix | 32 | 17 | 0.45 s | 498 | $17.59 |
+| Real conversations | 256 | 20 | 72.86 s | 597 | $14.69 |
 
 ## Engine settings
 

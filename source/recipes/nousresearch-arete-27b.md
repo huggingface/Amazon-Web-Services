@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name arete-27b-g6e-24
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 45 | 0.67 s | 44 | $118.79 |
+| Long answers | 4 | 39 | 2.09 s | 154 | $34.06 |
+| Long prompts | 4 | 7 | 18.06 s | 14 | $362.84 |
+| 64 users | 64 | 9 | 29.50 s | 283 | $18.49 |
+| Shared prompt prefix | 32 | 8 | 3.74 s | 173 | $30.25 |
+| Real conversations | 256 | 15 | 99.12 s | 455 | $11.49 |
 
 ## Engine settings
 

@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name ripple-65b-previ
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 20 | 0.82 s | 20 | $267.16 |
+| Long answers | 4 | 18 | 1.67 s | 72 | $72.31 |
+| Long prompts | 4 | 4 | 17.94 s | 9 | $552.77 |
+| 64 users | 64 | 6 | 45.96 s | 181 | $28.93 |
+| Shared prompt prefix | 32 | 8 | 0.99 s | 177 | $29.61 |
+| Real conversations | 256 | 10 | 141.12 s | 298 | $17.57 |
 
 ## Engine settings
 

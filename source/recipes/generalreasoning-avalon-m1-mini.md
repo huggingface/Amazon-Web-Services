@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name avalon-m1-mini-p
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 245 | 0.12 s | 241 | $83.78 |
+| Long answers | 4 | 191 | 0.20 s | 756 | $26.75 |
+| Long prompts | 4 | 132 | 0.83 s | 288 | $70.23 |
+| 64 users | 64 | 56 | 4.72 s | 1,777 | $11.38 |
+| Shared prompt prefix | 32 | 63 | 0.44 s | 1,643 | $12.31 |
+| Real conversations | 256 | 57 | 24.81 s | 1,707 | $11.85 |
 
 ## Engine settings
 

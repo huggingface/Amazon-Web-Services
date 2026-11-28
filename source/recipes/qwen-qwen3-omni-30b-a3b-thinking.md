@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen3-omni-30b-a
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 159 | 0.20 s | 157 | $33.38 |
+| Long answers | 4 | 95 | 0.06 s | 380 | $13.78 |
+| Long prompts | 4 | 19 | 5.58 s | 42 | $124.95 |
+| 64 users | 64 | 23 | 11.86 s | 702 | $7.45 |
+| Shared prompt prefix | 32 | 32 | 0.53 s | 788 | $6.64 |
+| Real conversations | 256 | 33 | 44.49 s | 1,002 | $5.22 |
 
 ## Engine settings
 

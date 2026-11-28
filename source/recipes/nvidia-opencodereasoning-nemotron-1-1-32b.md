@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name opencodereasonin
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 24 | 0.92 s | 24 | $81.20 |
+| Long answers | 4 | 22 | 2.20 s | 87 | $22.72 |
+| Long prompts | 4 | 4 | 29.17 s | 8 | $240.57 |
+| 64 users | 64 | 6 | 45.85 s | 182 | $10.79 |
+| Shared prompt prefix | 32 | 8 | 2.59 s | 188 | $10.45 |
+| Real conversations | 256 | 11 | 137.73 s | 319 | $6.18 |
 
 ## Engine settings
 

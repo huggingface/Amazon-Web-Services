@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name wemm-ecom-35b-a3
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 186 | 0.22 s | 180 | $29.05 |
+| Long answers | 4 | 120 | 0.61 s | 474 | $11.04 |
+| Long prompts | 4 | 28 | 5.44 s | 51 | $102.30 |
+| 64 users | 64 | 24 | 11.19 s | 747 | $7.00 |
+| Shared prompt prefix | 32 | 23 | 0.74 s | 574 | $9.11 |
+| Real conversations | 256 | 30 | 49.33 s | 928 | $5.64 |
 
 ## Engine settings
 

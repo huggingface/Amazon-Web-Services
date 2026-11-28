@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name weviscut-g6e-xla
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 44 | 0.20 s | 44 | $16.50 |
+| Long answers | 4 | 40 | 0.37 s | 160 | $4.51 |
+| Long prompts | 4 | 23 | 3.35 s | 58 | $12.53 |
+| 64 users | 64 | 26 | 10.37 s | 784 | $0.92 |
+| Shared prompt prefix | 32 | 23 | 0.73 s | 602 | $1.20 |
+| Real conversations | 256 | 31 | 48.60 s | 925 | $0.78 |
 
 ## Engine settings
 

@@ -12,7 +12,7 @@ Deploy from the AWS CloudFormation console or with the AWS CLI command. Both cre
 
 **NVIDIA L4 (ml.g6.xlarge)**, $1.13 per hour, 32,768-token context
 
-Validated on 26 Nov 2026 in us-west-2 with vLLM 0.34.0. Prices are us-east-1 on-demand.
+Validated on 27 Nov 2026 in us-west-2 with vLLM 0.34.0. Prices are us-east-1 on-demand.
 
 Failed checks on this instance: reasoning, tool calling.
 
@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name chandra-ocr-2-g6
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 28 | 0.30 s | 28 | $11.03 |
+| Long answers | 4 | 26 | 0.75 s | 103 | $3.03 |
+| Long prompts | 4 | 12 | 6.30 s | 29 | $10.64 |
+| 64 users | 64 | 13 | 20.70 s | 399 | $0.79 |
+| Shared prompt prefix | 32 | 10 | 0.81 s | 264 | $1.18 |
+| Real conversations | 256 | 17 | 76.20 s | 502 | $0.62 |
 
 ## Engine settings
 

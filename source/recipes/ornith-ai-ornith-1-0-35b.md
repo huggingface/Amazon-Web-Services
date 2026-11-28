@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name ornith-1-0-35b-g
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 186 | 0.20 s | 180 | $29.00 |
+| Long answers | 4 | 121 | 0.59 s | 476 | $10.98 |
+| Long prompts | 4 | 24 | 4.71 s | 52 | $101.54 |
+| 64 users | 64 | 24 | 11.32 s | 740 | $7.07 |
+| Shared prompt prefix | 32 | 22 | 0.68 s | 556 | $9.40 |
+| Real conversations | 256 | 30 | 49.64 s | 919 | $5.69 |
 
 ## Engine settings
 

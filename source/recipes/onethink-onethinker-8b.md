@@ -12,7 +12,7 @@ Deploy from the AWS CloudFormation console or with the AWS CLI command. Both cre
 
 **NVIDIA L40S (ml.g6e.2xlarge)**, $2.80 per hour, 32,768-token context
 
-Validated on 26 Nov 2026 in us-east-2 with vLLM 0.34.0. Prices are us-east-1 on-demand.
+Validated on 27 Nov 2026 in us-east-2 with vLLM 0.34.0. Prices are us-east-1 on-demand.
 
 Failed checks on this instance: tool calling.
 
@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name onethinker-8b-g6
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 45 | 0.12 s | 45 | $17.16 |
+| Long answers | 4 | 39 | 0.34 s | 157 | $4.96 |
+| Long prompts | 4 | 15 | 3.31 s | 44 | $17.73 |
+| 64 users | 64 | 25 | 10.46 s | 778 | $1.00 |
+| Shared prompt prefix | 32 | 25 | 0.22 s | 688 | $1.13 |
+| Real conversations | 256 | 36 | 39.17 s | 1,075 | $0.72 |
 
 ## Engine settings
 

@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen2-5-14b-inst
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 25 | 0.23 s | 25 | $28.76 |
+| Long answers | 4 | 23 | 0.62 s | 91 | $7.95 |
+| Long prompts | 4 | 11 | 6.82 s | 25 | $29.46 |
+| 64 users | 64 | 15 | 18.15 s | 449 | $1.61 |
+| Shared prompt prefix | 32 | 13 | 0.41 s | 336 | $2.15 |
+| Real conversations | 256 | 20 | 67.16 s | 603 | $1.20 |
 
 ## Engine settings
 

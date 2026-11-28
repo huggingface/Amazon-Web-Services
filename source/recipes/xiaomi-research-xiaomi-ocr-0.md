@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name xiaomi-ocr-0-g6-
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 143 | 0.20 s | 141 | $2.22 |
+| Long answers | 4 | 123 | 0.23 s | 487 | $0.64 |
+| Long prompts | 4 | 60 | 1.91 s | 127 | $2.46 |
+| 64 users | 64 | 52 | 5.10 s | 1,617 | $0.19 |
+| Shared prompt prefix | 32 | 48 | 0.53 s | 1,185 | $0.26 |
+| Real conversations | 256 | 63 | 21.63 s | 1,894 | $0.17 |
 
 ## Engine settings
 

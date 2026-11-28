@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name laguna-m-1-p4de-
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 57 | 0.16 s | 57 | $153.02 |
+| Long answers | 4 | 40 | 0.35 s | 160 | $54.84 |
+| Long prompts | 4 | 18 | 3.01 s | 50 | $174.86 |
+| 64 users | 64 | 19 | 13.82 s | 590 | $14.85 |
+| Shared prompt prefix | 32 | 21 | 0.39 s | 614 | $14.28 |
+| Real conversations | 256 | 21 | 71.63 s | 637 | $13.77 |
 
 ## Engine settings
 

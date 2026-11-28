@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name onethinker-sft-q
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 45 | 0.11 s | 45 | $17.24 |
+| Long answers | 4 | 39 | 0.28 s | 157 | $4.94 |
+| Long prompts | 4 | 15 | 3.12 s | 44 | $17.83 |
+| 64 users | 64 | 25 | 10.51 s | 776 | $1.00 |
+| Shared prompt prefix | 32 | 23 | 0.18 s | 622 | $1.25 |
+| Real conversations | 256 | 35 | 39.59 s | 1,074 | $0.72 |
 
 ## Engine settings
 

@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen3-8b-base-g6
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 45 | 0.11 s | 45 | $17.15 |
+| Long answers | 4 | 39 | 0.27 s | 157 | $4.95 |
+| Long prompts | 4 | 15 | 2.90 s | 46 | $16.96 |
+| 64 users | 64 | 26 | 10.26 s | 793 | $0.98 |
+| Shared prompt prefix | 32 | 26 | 0.32 s | 722 | $1.08 |
+| Real conversations | 256 | 36 | 36.80 s | 1,081 | $0.72 |
 
 ## Engine settings
 

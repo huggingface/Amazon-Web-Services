@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name bagel-7b-mot-g6e
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 49 | 0.11 s | 49 | $14.78 |
+| Long answers | 4 | 45 | 0.30 s | 181 | $4.00 |
+| Long prompts | 4 | 20 | 2.95 s | 55 | $13.09 |
+| 64 users | 64 | 29 | 9.16 s | 890 | $0.81 |
+| Shared prompt prefix | 32 | 26 | 0.19 s | 663 | $1.09 |
+| Real conversations | 256 | 37 | 31.74 s | 1,107 | $0.65 |
 
 ## Engine settings
 

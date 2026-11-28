@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name granite-3-3-8b-i
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 42 | 0.13 s | 42 | $17.13 |
+| Long answers | 4 | 37 | 0.26 s | 148 | $4.88 |
+| Long prompts | 4 | 14 | 3.35 s | 41 | $17.62 |
+| 64 users | 64 | 22 | 11.74 s | 695 | $1.04 |
+| Shared prompt prefix | 32 | 23 | 0.36 s | 646 | $1.12 |
+| Real conversations | 256 | 32 | 45.40 s | 957 | $0.76 |
 
 ## Engine settings
 

@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name cosmos3-edge-g6-
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 66 | 0.14 s | 66 | $4.78 |
+| Long answers | 4 | 49 | 0.27 s | 194 | $1.61 |
+| Long prompts | 4 | 16 | 3.68 s | 43 | $7.25 |
+| 64 users | 64 | 25 | 10.55 s | 776 | $0.40 |
+| Shared prompt prefix | 32 | 18 | 0.40 s | 470 | $0.67 |
+| Real conversations | 256 | 43 | 33.31 s | 1,313 | $0.24 |
 
 ## Engine settings
 

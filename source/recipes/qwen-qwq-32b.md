@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwq-32b-g7e-2xla
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 21 | 0.23 s | 21 | $55.88 |
+| Long answers | 4 | 21 | 0.78 s | 82 | $14.25 |
+| Long prompts | 4 | 11 | 8.47 s | 25 | $46.86 |
+| 64 users | 64 | 14 | 19.55 s | 417 | $2.80 |
+| Shared prompt prefix | 32 | 16 | 1.27 s | 403 | $2.90 |
+| Real conversations | 256 | 18 | 78.91 s | 554 | $2.11 |
 
 ## Engine settings
 

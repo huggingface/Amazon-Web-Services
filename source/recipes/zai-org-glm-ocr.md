@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name glm-ocr-g6-xlarg
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 170 | 0.10 s | 169 | $1.85 |
+| Long answers | 4 | 115 | 0.11 s | 459 | $0.68 |
+| Long prompts | 4 | 34 | 2.11 s | 88 | $3.57 |
+| 64 users | 64 | 54 | 4.87 s | 1,686 | $0.19 |
+| Shared prompt prefix | 32 | 41 | 0.32 s | 1,140 | $0.27 |
+| Real conversations | 256 | 99 | 6.32 s | 2,764 | $0.11 |
 
 ## Engine settings
 

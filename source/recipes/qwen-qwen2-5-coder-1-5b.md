@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name qwen2-5-coder-1-
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 73 | 0.07 s | 73 | $4.27 |
+| Long answers | 4 | 67 | 0.22 s | 266 | $1.18 |
+| Long prompts | 4 | 22 | 2.67 s | 61 | $5.11 |
+| 64 users | 64 | 38 | 6.98 s | 1,171 | $0.27 |
+| Shared prompt prefix | 32 | 37 | 0.34 s | 1,006 | $0.31 |
+| Real conversations | 256 | 55 | 21.78 s | 1,643 | $0.19 |
 
 ## Engine settings
 

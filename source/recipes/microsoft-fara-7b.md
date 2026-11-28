@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name fara-7b-g6e-xlar
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 49 | 0.11 s | 49 | $14.70 |
+| Long answers | 4 | 46 | 0.31 s | 183 | $3.95 |
+| Long prompts | 4 | 20 | 2.99 s | 55 | $13.26 |
+| 64 users | 64 | 29 | 9.12 s | 894 | $0.81 |
+| Shared prompt prefix | 32 | 26 | 0.17 s | 686 | $1.05 |
+| Real conversations | 256 | 37 | 26.54 s | 1,084 | $0.67 |
 
 ## Engine settings
 

@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name mistral-7b-instr
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 49 | 0.17 s | 49 | $53.95 |
+| Long answers | 4 | 44 | 0.30 s | 174 | $15.14 |
+| Long prompts | 4 | 19 | 4.17 s | 47 | $55.43 |
+| 64 users | 64 | 27 | 9.69 s | 842 | $3.13 |
+| Shared prompt prefix | 32 | 27 | 0.35 s | 723 | $3.64 |
+| Real conversations | 256 | 39 | 38.66 s | 1,157 | $2.27 |
 
 ## Engine settings
 

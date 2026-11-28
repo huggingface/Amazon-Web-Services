@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name deepseek-r1-0528
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 45 | 0.12 s | 45 | $17.16 |
+| Long answers | 4 | 39 | 0.33 s | 157 | $4.96 |
+| Long prompts | 4 | 16 | 3.24 s | 45 | $17.25 |
+| 64 users | 64 | 25 | 10.33 s | 788 | $0.99 |
+| Shared prompt prefix | 32 | 27 | 0.39 s | 739 | $1.05 |
+| Real conversations | 256 | 36 | 41.81 s | 1,088 | $0.72 |
 
 ## Engine settings
 

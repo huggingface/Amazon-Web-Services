@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name hy3-fp8-g6e-48xl
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 68 | 1.20 s | 66 | $158.05 |
+| Long answers | 4 | 42 | 4.04 s | 162 | $64.43 |
+| Long prompts | 4 | 3 | 33.95 s | 7 | $1,542.15 |
+| 64 users | 64 | 5 | 58.82 s | 143 | $73.22 |
+| Shared prompt prefix | 32 | 6 | 0.90 s | 155 | $67.58 |
+| Real conversations | 256 | 8 | 173.56 s | 237 | $44.18 |
 
 ## Engine settings
 

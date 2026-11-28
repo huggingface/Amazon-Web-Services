@@ -33,7 +33,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name minicpm-v-4-7-35
 
 ## Performance
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 184 | 0.31 s | 176 | $20.69 |
+| Long answers | 4 | 118 | 0.69 s | 464 | $7.86 |
+| Long prompts | 4 | 31 | 6.20 s | 49 | $73.85 |
+| 64 users | 64 | 24 | 11.32 s | 740 | $4.92 |
+| Shared prompt prefix | 32 | 21 | 0.65 s | 523 | $6.97 |
+| Real conversations | 256 | 28 | 52.31 s | 851 | $4.28 |
 
 ## Engine settings
 
