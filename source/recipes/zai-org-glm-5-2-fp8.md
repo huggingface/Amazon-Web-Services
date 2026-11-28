@@ -13,17 +13,17 @@ Pick an instance, then deploy in one click from the AWS console or run the AWS C
 <hfoptions id="instance">
 <hfoption id="8x NVIDIA H200 (ml.p5en.48xlarge)">
 
-**$72.80 per hour**, 393,216-token context, vLLM 0.33.0
+**$72.80 per hour**, 32,768-token context, vLLM 0.34.0
 
 <div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fzai-org-glm-5-2-fp8%2Fp5en-48xlarge-vllm-tp8-37a60751a5.json&amp;stackName=glm-5-2-fp8-p5en-48xlarge&amp;param_EndpointName=glm-5-2-fp8-p5en-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-5-2-fp8/p5en-48xlarge-vllm-tp8-37a60751a5.json" class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fzai-org-glm-5-2-fp8%2Fp5en-48xlarge-vllm-tp8-2b5cc36683.json&amp;stackName=glm-5-2-fp8-p5en-48xlarge&amp;param_EndpointName=glm-5-2-fp8-p5en-48xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-5-2-fp8/p5en-48xlarge-vllm-tp8-2b5cc36683.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name glm-5-2-fp8-p5en-48xlarge \
-    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-5-2-fp8/p5en-48xlarge-vllm-tp8-37a60751a5.json \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/zai-org-glm-5-2-fp8/p5en-48xlarge-vllm-tp8-2b5cc36683.json \
     --capabilities CAPABILITY_IAM \
     --parameters ParameterKey=EndpointName,ParameterValue=glm-5-2-fp8-p5en-48xlarge
 ```
@@ -36,7 +36,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name glm-5-2-fp8-p5en
 <hfoptions id="instance">
 <hfoption id="8x NVIDIA H200 (ml.p5en.48xlarge)">
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 94 | 0.21 s | 93 | $217.56 |
+| Long answers | 4 | 73 | 0.41 s | 290 | $69.77 |
+| Long prompts | 4 | 42 | 3.94 s | 74 | $274.40 |
+| 64 users | 64 | 24 | 11.25 s | 747 | $27.06 |
+| Shared prompt prefix | 32 | 35 | 0.70 s | 911 | $22.20 |
+| Real conversations | 256 | 25 | 58.48 s | 752 | $26.88 |
 
 </hfoption>
 </hfoptions>
@@ -46,7 +53,7 @@ No benchmark results for this instance yet.
 <hfoptions id="instance">
 <hfoption id="8x NVIDIA H200 (ml.p5en.48xlarge)">
 
-Container `huggingface-vllm:0.33.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
 | Environment variable | Value |
 |---|---|
@@ -55,7 +62,8 @@ Container `huggingface-vllm:0.33.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.0
 | `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
 | `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
 | `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.95` |
-| `SM_VLLM_MAX_MODEL_LEN` | `393216` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
 | `SM_VLLM_MODEL` | `zai-org/GLM-5.2-FP8` |
 | `SM_VLLM_NO_ENABLE_FLASHINFER_AUTOTUNE` | `true` |
 | `SM_VLLM_REASONING_PARSER` | `glm45` |

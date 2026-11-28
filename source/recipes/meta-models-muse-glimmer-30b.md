@@ -13,17 +13,17 @@ Pick an instance, then deploy in one click from the AWS console or run the AWS C
 <hfoptions id="instance">
 <hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
-**$4.20 per hour**, 65,536-token context, vLLM 0.29.0
+**$4.20 per hour**, 32,768-token context, vLLM 0.34.0
 
 <div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fmeta-models-muse-glimmer-30b%2Fg7e-2xlarge-vllm-tp1-844460379a.json&amp;stackName=muse-glimmer-30b-g7e-2xlarge&amp;param_EndpointName=muse-glimmer-30b-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-844460379a.json" class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fmeta-models-muse-glimmer-30b%2Fg7e-2xlarge-vllm-tp1-166b9c6655.json&amp;stackName=muse-glimmer-30b-g7e-2xlarge&amp;param_EndpointName=muse-glimmer-30b-g7e-2xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-166b9c6655.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name muse-glimmer-30b-g7e-2xlarge \
-    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-844460379a.json \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/meta-models-muse-glimmer-30b/g7e-2xlarge-vllm-tp1-166b9c6655.json \
     --capabilities CAPABILITY_IAM \
     --parameters ParameterKey=EndpointName,ParameterValue=muse-glimmer-30b-g7e-2xlarge
 ```
@@ -54,7 +54,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name muse-glimmer-30b
 <hfoptions id="instance">
 <hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 25 | 0.20 s | 24 | $47.73 |
+| Long answers | 4 | 24 | 0.66 s | 97 | $12.03 |
+| Long prompts | 4 | 15 | 6.79 s | 34 | $34.39 |
+| 64 users | 64 | 16 | 16.80 s | 485 | $2.41 |
+| Shared prompt prefix | 32 | 17 | 1.06 s | 441 | $2.65 |
+| Real conversations | 256 | 21 | 66.78 s | 632 | $1.85 |
 
 </hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
@@ -69,23 +76,22 @@ No benchmark results for this instance yet.
 <hfoptions id="instance">
 <hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
-Container `vllm`, pinned to `sha256:8149cac72c6b972e999c389006a06a3849d9eddf23990bea150132e577d079ae`.
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
 | Environment variable | Value |
 |---|---|
 | `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
-| `SM_VLLM_ENABLE_CHUNKED_PREFILL` | `true` |
-| `SM_VLLM_ENABLE_PREFIX_CACHING` | `true` |
 | `SM_VLLM_GENERATION_CONFIG` | `auto` |
-| `SM_VLLM_KV_CACHE_DTYPE` | `fp8` |
-| `SM_VLLM_MAX_MODEL_LEN` | `65536` |
-| `SM_VLLM_MAX_NUM_SEQS` | `64` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.9` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
 | `SM_VLLM_MODEL` | `meta-models/Muse-Glimmer-30B` |
 | `SM_VLLM_REASONING_PARSER` | `muse_glimmer` |
 | `SM_VLLM_REVISION` | `a4e59da52a7bc87ae7251dd5545c0dd437c44b68` |
 | `SM_VLLM_SERVED_MODEL_NAME` | `meta-models/Muse-Glimmer-30B` |
 | `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
 | `SM_VLLM_TOOL_CALL_PARSER` | `muse_glimmer` |
+| `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
 
 </hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
