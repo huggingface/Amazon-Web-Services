@@ -13,17 +13,17 @@ Pick an instance, then deploy in one click from the AWS console or run the AWS C
 <hfoptions id="instance">
 <hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
 
-**$20.72 per hour**, 1,048,576-token context, vLLM 0.32.0
+**$20.72 per hour**, 32,768-token context, vLLM 0.34.0
 
 <div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
-<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fg7e-24xlarge-vllm-tp4-0eaa7f9619.json&amp;stackName=deepseek-v4-1-flash-1017-g7e-24xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-g7e-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-0eaa7f9619.json" class="btn h-9">Copy template URL</button></div>
+<div class="flex flex-wrap items-center gap-2"><a class="btn h-9 no-underline!" target="_blank" rel="noopener" href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https%3A%2F%2Fhf-sagemaker-recipes.s3.us-east-1.amazonaws.com%2Ftemplates%2Fdeepseek-ai-deepseek-v4-1-flash-1017%2Fg7e-24xlarge-vllm-tp4-f1d8aea157.json&amp;stackName=deepseek-v4-1-flash-1017-g7e-24xlarge&amp;param_EndpointName=deepseek-v4-1-flash-1017-g7e-24xlarge">Deploy on SageMaker ↗</a><button type="button" data-copy="https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-f1d8aea157.json" class="btn h-9">Copy template URL</button></div>
 
 </div>
 
 ```bash
 aws cloudformation create-stack --region us-east-1 --stack-name deepseek-v4-1-flash-1017-g7e-24xlarge \
-    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-0eaa7f9619.json \
+    --template-url https://hf-sagemaker-recipes.s3.us-east-1.amazonaws.com/templates/deepseek-ai-deepseek-v4-1-flash-1017/g7e-24xlarge-vllm-tp4-f1d8aea157.json \
     --capabilities CAPABILITY_IAM \
     --parameters ParameterKey=EndpointName,ParameterValue=deepseek-v4-1-flash-1017-g7e-24xlarge
 ```
@@ -90,7 +90,14 @@ aws cloudformation create-stack --region us-east-1 --stack-name deepseek-v4-1-fl
 <hfoptions id="instance">
 <hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
 
-No benchmark results for this instance yet.
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+|---|---:|---:|---:|---:|---:|
+| One user | 1 | 79 | 0.16 s | 79 | $72.94 |
+| Long answers | 4 | 62 | 0.28 s | 247 | $23.32 |
+| Long prompts | 4 | 38 | 2.41 s | 90 | $63.94 |
+| 64 users | 64 | 23 | 11.51 s | 712 | $8.08 |
+| Shared prompt prefix | 32 | 26 | 0.50 s | 732 | $7.86 |
+| Real conversations | 256 | 20 | 70.85 s | 623 | $9.24 |
 
 </hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
@@ -115,26 +122,30 @@ No benchmark results for this instance yet.
 <hfoptions id="instance">
 <hfoption id="4x NVIDIA RTX PRO 6000 (ml.g7e.24xlarge)">
 
-Container `huggingface-vllm:0.32.0-transformers5.19.0-gpu-py312-cu130-ubuntu24.04`.
+Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
 | Environment variable | Value |
 |---|---|
-| `SM_VLLM_BLOCK_SIZE` | `64` |
-| `SM_VLLM_COMPILATION_CONFIG` | `{"max_cudagraph_capture_size":768,"cudagraph_capture_sizes":[1,2,4,6,8,12,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,224,232,240,248,256,272,288,304,320,336,352,368,384,400,416,432,448,464,480,496,512,528,544,560,576,592,608,624,640,656,672,688,704,720,736,752,768]}` |
+| `PYTORCH_CUDA_ALLOC_CONF` | `expandable_segments:True` |
 | `SM_VLLM_ENABLE_AUTO_TOOL_CHOICE` | `true` |
 | `SM_VLLM_ENABLE_EXPERT_PARALLEL` | `true` |
-| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.97` |
-| `SM_VLLM_MAX_MODEL_LEN` | `1048576` |
+| `SM_VLLM_ENABLE_PROMPT_TOKENS_DETAILS` | `true` |
+| `SM_VLLM_ENGRAM_CONFIG` | `{"cpu_offload":true}` |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | `0.92` |
+| `SM_VLLM_MAX_MODEL_LEN` | `32768` |
 | `SM_VLLM_MAX_NUM_BATCHED_TOKENS` | `4096` |
+| `SM_VLLM_MAX_NUM_SEQS` | `32` |
 | `SM_VLLM_MM_ENCODER_TP_MODE` | `data` |
 | `SM_VLLM_MODEL` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
 | `SM_VLLM_REASONING_PARSER` | `deepseek_v41` |
 | `SM_VLLM_REVISION` | `1bae0e1088993b9b82de08f59de5be5a34e42170` |
 | `SM_VLLM_SERVED_MODEL_NAME` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` |
-| `SM_VLLM_SPECULATIVE_CONFIG` | `{"method":"dspark","num_speculative_tokens":5,"revision":"1bae0e1088993b9b82de08f59de5be5a34e42170","enable_adaptive_verification":true,"use_local_argmax_reduction":true}` |
 | `SM_VLLM_TENSOR_PARALLEL_SIZE` | `4` |
 | `SM_VLLM_TOKENIZER_MODE` | `deepseek_v41` |
 | `SM_VLLM_TOOL_CALL_PARSER` | `deepseek_v41` |
+| `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
+| `VLLM_USE_RUST_FRONTEND` | `0` |
+| `VLLM_USE_V2_MODEL_RUNNER` | `1` |
 
 </hfoption>
 <hfoption id="8x NVIDIA RTX PRO 6000 (ml.g7e.48xlarge)">
