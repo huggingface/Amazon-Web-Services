@@ -4,16 +4,17 @@
 
 <div class="not-prose my-4 flex items-start gap-3"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60538e733efc404ddc7c0c0d/KNnLPW5-_JjQfFwARMmPX.png" alt="Language Technologies Laboratory @ Barcelona Supercomputing Center logo" loading="lazy" style="background-color: #fff" class="size-12 shrink-0 rounded-md border border-gray-200 object-contain p-0.5 dark:border-gray-700"><div class="flex flex-col gap-2"><span class="text-base text-gray-700 dark:text-gray-300">A 40B ALIA multilingual instruction model for chat, translation, summarization, QA, and 164K-context text generation.</span><span class="flex flex-wrap gap-1.5 text-xs"></span></div></div>
 
-[BSC-LT/ALIA-40b-instruct-2606](https://huggingface.co/BSC-LT/ALIA-40b-instruct-2606) by [Language Technologies Laboratory @ Barcelona Supercomputing Center](https://huggingface.co/BSC-LT): 40B parameters, 163,840-token context, license `apache-2.0`.
+[BSC-LT/ALIA-40b-instruct-2606](https://huggingface.co/BSC-LT/ALIA-40b-instruct-2606) by [Language Technologies Laboratory @ Barcelona Supercomputing Center](https://huggingface.co/BSC-LT): 40B parameters, 163,840-token context, license [apache-2.0](https://huggingface.co/BSC-LT/ALIA-40b-instruct-2606).
 
 ## Deploy
 
-Pick an instance, then deploy in one click from the AWS console or run the AWS CLI command. Both deploy in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
+Deploy from the AWS CloudFormation console or with the AWS CLI command. Both create the endpoint in `us-east-1`; not every instance type is available in every region. The endpoint is ready after 10 to 30 minutes. To deploy from Python, see [Deploy a model](./deploy-a-recipe).
 
-<hfoptions id="instance">
-<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
+**NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)**, $4.20 per hour, 32,768-token context
 
-**$4.20 per hour**, 32,768-token context, vLLM 0.34.0
+Validated on 26 Nov 2026 in us-east-2 with vLLM 0.34.0. Prices are us-east-1 on-demand.
+
+New AWS accounts often have no quota for this instance: request `ml.g7e.2xlarge for endpoint usage` in [Service Quotas](https://us-east-1.console.aws.amazon.com/servicequotas/home/services/sagemaker/quotas) before deploying.
 
 <div class="not-prose my-4" {@attach (root) => { const copy = root.querySelector("button[data-copy]"); copy.addEventListener("click", () => { navigator.clipboard.writeText(copy.dataset.copy).then(() => { copy.textContent = "Copied"; setTimeout(() => { copy.textContent = "Copy template URL"; }, 2000); }); }); }}>
 
@@ -28,15 +29,9 @@ aws cloudformation create-stack --region us-east-1 --stack-name alia-40b-instruc
     --parameters ParameterKey=EndpointName,ParameterValue=alia-40b-instruct-2606-g7e-2xlarge
 ```
 
-</hfoption>
-</hfoptions>
-
 ## Performance
 
-<hfoptions id="instance">
-<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
-
-| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M tokens |
+| Workload | Concurrent requests | Tokens/s per user | Time to first token | Total tokens/s | Cost per 1M output tokens |
 |---|---:|---:|---:|---:|---:|
 | One user | 1 | 19 | 0.28 s | 18 | $63.19 |
 | Long answers | 4 | 18 | 0.92 s | 72 | $16.15 |
@@ -45,13 +40,7 @@ aws cloudformation create-stack --region us-east-1 --stack-name alia-40b-instruc
 | Shared prompt prefix | 32 | 15 | 1.69 s | 364 | $3.21 |
 | Real conversations | 256 | 16 | 95.65 s | 481 | $2.43 |
 
-</hfoption>
-</hfoptions>
-
 ## Engine settings
-
-<hfoptions id="instance">
-<hfoption id="NVIDIA RTX PRO 6000 (ml.g7e.2xlarge)">
 
 Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e9563743fd763d2934c110191568cfe39`.
 
@@ -67,9 +56,6 @@ Container `huggingface-vllm`, pinned to `sha256:ab85af8f64c47ddb9ba40ddb94727f4e
 | `SM_VLLM_SERVED_MODEL_NAME` | `BSC-LT/ALIA-40b-instruct-2606` |
 | `SM_VLLM_TENSOR_PARALLEL_SIZE` | `1` |
 | `VLLM_ENGINE_READY_TIMEOUT_S` | `3600` |
-
-</hfoption>
-</hfoptions>
 
 ## Send requests
 
@@ -93,7 +79,7 @@ print(response.choices[0].message.content)
 
 ## Clean up
 
-Endpoints are billed per hour while they run. Delete the stack when you are done, from the CloudFormation console or with:
+Endpoints are billed per hour while they run. Delete the stack when you are done, from the CloudFormation console or with the command below. If you changed the stack name when deploying, use that name instead:
 
 ```bash
 aws cloudformation delete-stack --region us-east-1 --stack-name alia-40b-instruct-2606-g7e-2xlarge

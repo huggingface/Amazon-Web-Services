@@ -1,49 +1,51 @@
 # How deployments are benchmarked
 
-A recipe is a tested way to serve one Hub model on one Amazon SageMaker AI instance. It pins everything that changes the result:
+A recipe is a deployment configuration for one Hub model on one Amazon SageMaker AI instance type. The catalog lists a recipe only after it was deployed on a SageMaker real-time endpoint with the Hugging Face vLLM Deep Learning Container (DLC) and passed at least the chat check described below. A recipe pins everything that changes the result:
 
-- **Model**: the Hub model ID and, when set, the exact model revision.
-- **Container**: the Hugging Face vLLM Deep Learning Container (DLC) `huggingface-vllm`, pinned by tag and, when available, by image digest.
-- **Instance**: the SageMaker instance type, for example `ml.g6e.12xlarge` with 4 NVIDIA L40S GPUs.
-- **Engine settings**: the `SM_VLLM_*` environment variables passed to the container. Each one maps to a vLLM engine argument, so `SM_VLLM_TENSOR_PARALLEL_SIZE=4` becomes `--tensor-parallel-size 4`.
-- **Endpoint settings**: the inference AMI version (`al2023-ami-sagemaker-inference-gpu-4-1` for the CUDA 13 images) and the container startup health check timeout.
-- **Results**: the validation checks and benchmark numbers measured on a SageMaker endpoint with these exact settings, when available.
+- **Model**: the Hub model ID and the exact model revision, passed to the container as `SM_VLLM_REVISION`.
+- **Container**: the Hugging Face vLLM DLC `huggingface-vllm`, pinned by image digest when available, which is the case for nearly all recipes, and by tag otherwise.
+- **Instance**: the SageMaker instance type, for example `ml.g6e.xlarge` with one NVIDIA L40S GPU.
+- **Engine settings**: the `SM_VLLM_*` environment variables passed to the container. Each one maps to a vLLM engine argument, so `SM_VLLM_TENSOR_PARALLEL_SIZE=4` becomes `--tensor-parallel-size 4` and `SM_VLLM_MAX_MODEL_LEN` sets the context length.
+- **Endpoint settings**: the inference AMI version, for example `al2023-ami-sagemaker-inference-gpu-4-1`, and the container startup health check timeout.
 
-Each deployment also has an AWS CloudFormation template that the deploy buttons and AWS CLI commands use. Benchmarks run against a SageMaker real-time endpoint through the SageMaker runtime, so the numbers include the SageMaker front end and not only the engine.
+Each model page shows these settings, the date and AWS region of the validation run, and the vLLM version. The AWS CloudFormation template behind the deploy button and the AWS CLI command is built from the same settings.
 
 ## Validation
 
-Validation sends one request per capability and checks the response:
+Validation sends a few requests to the endpoint, one per capability, and checks each response:
 
-- **Chat**: a chat completion returns a well-formed answer.
-- **Streaming**: the same request with `stream: true` returns server-sent events.
-- **Tool calling**: the model returns a structured tool call for a request that defines tools.
-- **Reasoning**: the reasoning parser separates the reasoning content from the final answer.
-- **Vision**: the model answers a question about an image, for models that accept images.
-- **Responses**: a request to the OpenAI Responses API (`/v1/responses`).
+- **Chat**: a chat completion request returns a well-formed answer.
+- **Streaming**: the same request with `stream: true` returns the answer as server-sent events.
+- **Tool calling**: for a request that defines a tool, the model returns a structured tool call.
+- **Reasoning**: with reasoning turned on, the reasoning parser returns the reasoning separately from the final answer. A second request turns reasoning off and expects an answer without reasoning.
+- **Image and video input**: the model describes an image or a short video, for models that accept them.
 
-A model page lists the capabilities that passed, the ones that failed, and the ones that were not tested. The `responses` check fails on every recipe: the SageMaker OpenAI-compatible route only serves chat completions, so the Responses API is not reachable through SageMaker even though vLLM supports it.
+Each check only runs for capabilities the model is expected to support, so a text-only model is not tested on images. Chat must pass for a recipe to be listed. The other checks are informative: a model page shows the **Tools**, **Reasoning**, and **Vision** tags only when the corresponding check passed, and lists the checks that failed below the instance. A failed check means the capability did not work through SageMaker with these settings, so don't rely on it for that recipe.
+
+Validation also sends a request to the OpenAI Responses API (`/v1/responses`). The SageMaker OpenAI-compatible route returned HTTP 404 for these requests in our runs, so model pages don't report this check. Use the chat completions API, as shown in [Deploy a model](./deploy-a-recipe).
 
 ## Benchmarks
 
-Benchmarks use [`vllm bench serve`](https://docs.vllm.ai/en/latest/cli/bench/serve.html) against the endpoint. Each workload models a different use:
+Benchmarks use [`vllm bench serve`](https://docs.vllm.ai/en/latest/cli/bench/serve.html) against the OpenAI-compatible route of the SageMaker endpoint, so the numbers include the SageMaker front end and the network between the benchmark client and the AWS region, not only the engine. Some recipes have no benchmark results yet, and their model page says so.
 
-| Workload | Concurrency | Input tokens | Output tokens | Use |
+Each workload models a different use. Input and output lengths are nominal: the random prompts vary in length, and the measured averages are close to these values.
+
+| Workload on the model page | Concurrent requests | Input tokens | Output tokens | Use |
 |---|---:|---:|---:|---|
-| `single-request` | 1 | 1,024 | 2,048 | One user at a time; shows the best per-user speed |
-| `long-decode` | 4 | 1,024 | 4,096 | Long answers, such as reports or code |
-| `long-prefill` | 4 | 16,384 | 128 | Long prompts with short answers, such as retrieval or document questions |
-| `concurrency` | 64 | 1,024 | 256 | Many users at once; shows the throughput of the instance |
-| `prefix` | 32 | 4,096 shared + 256 | 128 | Requests that share a long prompt prefix, such as a system prompt; shows the effect of prefix caching |
-| `sharegpt` | up to 256 | varies | varies | 1,000 real conversations from the ShareGPT dataset |
+| One user (`single-request`) | 1 | about 1,024 | about 2,048 | One user at a time; shows the best speed a single user sees |
+| Long answers (`long-decode`) | 4 | about 1,024 | about 4,096 | Long answers, such as reports or code |
+| Long prompts (`long-prefill`) | 4 | about 16,384 | about 128 | Long prompts with short answers, such as retrieval or questions about a document |
+| 64 users (`concurrency`) | 64 | about 1,024 | about 256 | Many users at once; shows the throughput of the instance |
+| Shared prompt prefix (`prefix`) | 32 | about 4,096 shared + 256 | about 128 | Requests that share a long prefix, such as a system prompt; shows the effect of prefix caching |
+| Real conversations (`sharegpt`) | 256 | varies | varies | 1,000 real conversations from the ShareGPT dataset |
 
-The maximum concurrency of any workload is 256. The SageMaker front end throttles large bursts of requests with HTTP 429 errors, so a higher concurrency measures the throttling instead of the model.
+No workload uses more than 256 concurrent requests. Higher concurrency produced HTTP 429 responses in our runs, which would measure the rejected requests instead of the model.
 
 ## How to read the metrics
 
-- **Per-user tok/s**: how fast one user sees tokens arrive, computed as 1,000 divided by the median time per output token (TPOT). Higher is better. The `single-request` workload gives the best case.
-- **TTFT**: time to first token, the delay between sending a request and receiving the first token. It grows with the prompt length and with load. Lower is better.
-- **Output tok/s**: total output tokens per second across all concurrent requests. It measures the capacity of the instance. Higher is better.
-- **USD per 1M output tokens**: the on-demand hourly price of the instance divided by the output tokens generated in one hour at the measured throughput. It assumes the endpoint is busy all the time, so it is a lower bound for a real workload.
+- **Tokens/s per user**: how fast one user sees tokens arrive, computed as 1,000 divided by the median time per output token (TPOT) in milliseconds. Higher is better. The One user workload gives the best case.
+- **Time to first token**: the median delay between sending a request and receiving the first token (TTFT). It grows with the prompt length and with load. Lower is better.
+- **Total tokens/s**: output tokens per second summed over all concurrent requests. It measures the capacity of the instance. Higher is better.
+- **Cost per 1M output tokens**: the hourly price of the instance divided by the output tokens generated in one hour at the measured total tokens/s. It assumes the endpoint is busy all the time, so a real workload with idle periods costs more per token.
 
-Prices are SageMaker on-demand prices in the region shown on each recipe; check [Amazon SageMaker AI pricing](https://aws.amazon.com/sagemaker/ai/pricing/) for your region. `n/a` means the value was not measured.
+Prices are SageMaker AI on-demand prices in `us-east-1` at the time the catalog was generated, whatever the region of the validation run. Prices differ in other regions and with savings plans; check [Amazon SageMaker AI pricing](https://aws.amazon.com/sagemaker/ai/pricing/) for yours. `n/a` means the value was not measured.

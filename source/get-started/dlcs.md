@@ -34,7 +34,7 @@ Hugging Face DLCs are open source and licensed under Apache 2.0. Browse the full
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 my-6 not-prose">
   <div class="rounded-xl border border-gray-200 px-5 py-4 dark:border-gray-800">
     <div class="font-semibold text-gray-900 dark:text-white">One command to train</div>
-    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">The training DLCs ship with everything needed to run a single command — for example the <a href="https://huggingface.co/docs/trl/en/clis">TRL CLI</a> — to fine-tune LLMs from single-GPU to multi-node multi-GPU.</p>
+    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">The training DLCs ship with everything needed to run a single command, for example the <a href="https://huggingface.co/docs/trl/en/clis">TRL CLI</a>, to fine-tune LLMs from single-GPU to multi-node multi-GPU.</p>
   </div>
   <div class="rounded-xl border border-gray-200 px-5 py-4 dark:border-gray-800">
     <div class="font-semibold text-gray-900 dark:text-white">Production serving engines</div>
@@ -95,7 +95,7 @@ For inference, the general-purpose PyTorch inference DLC serves models trained w
 
 ### vLLM
 
-For serving text generation models with [vLLM](https://docs.vllm.ai/), there are specific DLCs available for GPU and AWS AI chips. For tested deployments of popular models with the GPU image, see the [Recipes](../recipes/index).
+For serving text generation models with [vLLM](https://docs.vllm.ai/), there are specific DLCs available for GPU and AWS AI chips. For model deployments validated on SageMaker AI with the GPU image, see the [recipes](../recipes/index).
 
 <div class="overflow-x-auto my-4 not-prose">
 <table class="w-full text-sm">
